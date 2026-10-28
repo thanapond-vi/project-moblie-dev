@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// กฎความปลอดภัยของ Cloud Firestore
+// study_logs:
+// - ต้องล็อกอินก่อนเท่านั้น
+// - อ่าน/แก้/ลบ ได้เฉพาะเอกสารที่ userId ตรงกับ uid ของตัวเอง
+// - สร้างได้เฉพาะเอกสารที่ใส่ userId เป็นของตัวเอง (ปลอมเป็นคนอื่นไม่ได้)
+// - ตอนแก้ไข ห้ามเปลี่ยน userId ไปเป็นของคนอื่น
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // โปรไฟล์: ชื่อเล่น, id ตัวละคร, รูปของผู้ใช้เอง (base64) อ่าน/เขียนได้เฉพาะเจ้าของ
+    // document ID = uid จึงเทียบกับ request.auth.uid ได้ตรงๆ
+    // ตอนเขียนตรวจรูปแบบข้อมูลซ้ำที่เซิร์ฟเวอร์ด้วย (แอปตรวจแล้ว แต่ไม่ควรเชื่อฝั่งแอปอย่างเดียว)
+    // request.resource.data = เอกสารทั้งก้อนหลังรวม (merge) แล้ว
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+                   && validProfile(request.resource.data);
+    }
+
+    function validProfile(data) {
+      // selectedCoverId = field ของรุ่นเก่า (เอกสารเดิมยังมีอยู่ จึงต้องอนุญาตไว้)
+      return data.keys().hasOnly(
+               ['nickname', 'avatarPresetId', 'selectedCoverId', 'avatarBase64',
+                'email', 'updatedAt'])
+          && (!('nickname' in data)
+              || (data.nickname is string && data.nickname.size() >= 2
+                  && data.nickname.size() <= 40))
+          && (!('avatarPresetId' in data)
+              || (data.avatarPresetId is string && data.avatarPresetId.size() <= 40))
+          // base64 ไม่เกิน ~700 KB (เอกสาร Firestore สูงสุด 1 MB)
+          && (!('avatarBase64' in data)
+              || (data.avatarBase64 is string && data.avatarBase64.size() < 700000));
+    }
+
+    match /study_logs/{logId} {
+      allow read, delete: if request.auth != null
+                          && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == resource.data.userId;
+    }
+  }
+}

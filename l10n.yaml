@@ -1,0 +1,8 @@
+# ตั้งค่าระบบหลายภาษา (flutter gen-l10n)
+# app_en.arb คือแม่แบบ: ทุก key ต้องมีในไฟล์นี้ก่อน แล้วแปลใน app_th.arb / app_zh.arb
+arb-dir: lib/l10n/arb
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-dir: lib/l10n/gen
+nullable-getter: false
+preferred-supported-locales: [en, zh, th]

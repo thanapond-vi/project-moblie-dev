@@ -1,0 +1,435 @@
+{
+  "@@locale": "en",
+  "tagline": "Read · Recall · Summarize — practice with Active Recall",
+  "cancel": "Cancel",
+  "retry": "Try again",
+  "save": "Save",
+  "discard": "Discard",
+  "delete": "Delete",
+  "continueLabel": "Continue",
+  "minutesValue": "{count} min",
+  "@minutesValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "login": "Login",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "haveAccount": "Already have an account? Login",
+  "noAccount": "Don't have an account? Register",
+  "vEmailRequired": "Please enter your email",
+  "vEmailInvalid": "Invalid email format",
+  "vPasswordRequired": "Please enter your password",
+  "vPasswordMin": "Password must be at least {min} characters",
+  "@vPasswordMin": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "vConfirmRequired": "Please confirm your password",
+  "vPasswordMismatch": "Passwords do not match",
+  "vSummaryRequired": "Please write the key points",
+  "vSummaryMin": "Too short — at least {min} characters (now {count})",
+  "@vSummaryMin": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "vNicknameRequired": "Please enter a nickname",
+  "vNicknameLength": "Nickname must be {min}–{max} characters",
+  "@vNicknameLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "errNoInternet": "No internet connection",
+  "errTimeout": "The connection took too long. Please try again.",
+  "errGeneric": "Something went wrong. Please try again.",
+  "errGenericCode": "Something went wrong ({code})",
+  "@errGenericCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errUserDisabled": "This account has been disabled",
+  "errWrongCredentials": "Incorrect email or password",
+  "errEmailInUse": "This email is already registered",
+  "errWeakPassword": "Password is too weak",
+  "errTooManyRequests": "Too many attempts. Please wait a moment.",
+  "errAuthNotEnabled": "Email/Password sign-in is not enabled in Firebase Console",
+  "errPermissionDenied": "You don't have permission to access this data",
+  "errDbUnavailable": "Can't reach the database. Check your internet.",
+  "errSaveFailed": "Could not save ({code})",
+  "@errSaveFailed": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errDbTimeout": "The database is responding slowly. Please try again.",
+  "errArticleEmpty": "This article has no content. Please try another.",
+  "errNoArticle": "No article found. Please try again.",
+  "errWikiTimeout": "Wikipedia is responding slowly. Please try again.",
+  "errWikiLoad": "Could not load the article. Please try again.",
+  "errWikiRateLimit": "Too many requests. Please wait a moment and try again.",
+  "errWikiStatus": "Wikipedia returned an error ({code})",
+  "@errWikiStatus": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errAiNotConfigured": "AI is not set up (add GROQ_API_KEY to .env)",
+  "errAiBadKey": "The Groq API key is invalid",
+  "errAiModelNotFound": "Model {model} was not found on Groq (check GROQ_MODEL in .env)",
+  "@errAiModelNotFound": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "errAiRateLimit": "AI is being used too often. Please wait and try again.",
+  "errAiStatus": "AI returned an error ({code})",
+  "@errAiStatus": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errAiTimeout": "AI took too long. Please try again.",
+  "errAiConnect": "Can't reach the AI. Check your internet.",
+  "errAiRead": "Could not read the AI result. Please try again.",
+  "errAiBadFormat": "The AI replied in an unreadable format",
+  "errAiNoScore": "The AI did not return a score",
+  "aiNoFeedback": "No feedback",
+  "errTtsNoVoice": "This device has no {language} voice",
+  "@errTtsNoVoice": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "errImageTooLarge": "The image is too large. Please choose another one.",
+  "errLoginAgain": "Please log in again",
+  "errProfilePermission": "You don't have permission to save this profile",
+  "errProfileSave": "Could not save your profile ({code})",
+  "@errProfileSave": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errFirebaseInit": "Could not connect to Firebase\n\n{message}",
+  "@errFirebaseInit": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "helloName": "Hello, {name}",
+  "@helloName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingFallback": "What will you learn today?",
+  "profileSettingsTooltip": "Profile & Settings",
+  "randomArticle": "Random article",
+  "finishCurrentFirst": "Finish the current one",
+  "sessionLockedMessage": "You have an article in progress. Finish its summary before starting a new one.",
+  "sessionReading": "Reading · Paused",
+  "sessionSummarizing": "Finished · Awaiting summary",
+  "timeLeft": "{time} left",
+  "@timeLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "readForMinutes": "Read {count} min",
+  "@readForMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tapToResume": "Tap to keep reading",
+  "tapToSummarize": "Tap to continue your summary",
+  "options": "Options",
+  "discardArticle": "Discard this article",
+  "discardSessionTitle": "Discard the article in progress?",
+  "discardSessionMessage": "\"{title}\" and your draft summary will be removed. Then you can start a new article.",
+  "@discardSessionMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "statRead": "Articles read",
+  "statAvgScore": "Average score",
+  "statTotalTime": "Total reading",
+  "unitArticles": "articles",
+  "unitMinutes": "min",
+  "statAllTime": "All time",
+  "emptyTitle": "No reading history yet",
+  "emptyBody": "Tap \"Random article\" to start, then summarize it from memory.",
+  "deleteLogTitle": "Delete this entry?",
+  "deleteLogMessage": "\"{title}\" will be deleted permanently.",
+  "@deleteLogMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deletedMessage": "Deleted \"{title}\"",
+  "@deletedMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notEvaluated": "Not evaluated",
+  "historyLoadError": "Could not load your history\n{error}",
+  "@historyLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "readingTitle": "Reading",
+  "searchMore": "Search for more",
+  "pauseForLater": "Pause and read later",
+  "pausedMessage": "Reading paused. Tap the card on the home screen to continue.",
+  "timeUpTitle": "Time's up",
+  "timeUpBody": "Now summarize the key points from memory, without looking back at the article.",
+  "goSummarize": "Write summary",
+  "finishedReading": "Done reading — write summary",
+  "loadingArticle": "Picking a random article from Wikipedia...",
+  "charCount": "{count} characters",
+  "@charCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timerRunning": "Timer running",
+  "timerPaused": "Paused",
+  "pauseTimer": "Pause",
+  "resumeTimer": "Resume timer",
+  "ttsPlay": "Listen",
+  "ttsPause": "Pause voice",
+  "ttsStop": "Stop voice",
+  "ttsReading": "Reading paragraph {current}/{total}",
+  "@ttsReading": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ttsPausedAt": "Paused at paragraph {current}/{total}",
+  "@ttsPausedAt": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ttsIdle": "Listen to this article",
+  "ttsError": "Could not start the voice reader",
+  "linkError": "Could not open the link",
+  "searchGoogle": "Search on Google",
+  "openWikipedia": "Open the Wikipedia page",
+  "openWikipediaSub": "See images, tables and references",
+  "writeSummaryTitle": "Write summary",
+  "editSummaryTitle": "Edit summary",
+  "recallHint": "Summarize the key points from memory — no peeking at the article.",
+  "editHint": "Edit your summary, then let the AI evaluate it again.",
+  "summaryHint": "What is this article about? What are the main points?",
+  "summaryCounter": "{count} characters (at least {min})",
+  "@summaryCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "aiEvaluating": "AI is evaluating...",
+  "saving": "Saving...",
+  "evaluateAndSave": "Evaluate with AI & save",
+  "reevaluateAndSave": "Re-evaluate & save",
+  "earnedMinutes": "+{count} min added to your total",
+  "@earnedMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewOriginal": "View the original article",
+  "viewOriginalSub": "The part the AI compared against",
+  "doneBackHome": "Done — back to home",
+  "staleScore": "This score is for your previous text. Evaluate again to update it.",
+  "scoreLabel": "Understanding score",
+  "notEvaluatedYet": "Not evaluated yet",
+  "scoreOutOf": "{score} / 100",
+  "@scoreOutOf": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "evaluatedBy": "Evaluated by Groq · {model}",
+  "@evaluatedBy": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "aiFeedbackTitle": "AI Feedback",
+  "aiFailed": "AI evaluation failed",
+  "saveWithoutScore": "Save for now (no score)",
+  "savedMessage": "Saved",
+  "removeScoreTitle": "Remove the old score?",
+  "removeScoreMessage": "The old score belongs to your previous text. Saving now will mark it as \"not evaluated\".",
+  "discardDraftTitle": "Discard your text?",
+  "discardDraftMessage": "Your unsaved summary will be lost.",
+  "tagsTitle": "Tags (up to 3)",
+  "tagsHint": "The AI suggests tags after evaluating. Tap to change.",
+  "tagsLimit": "You can pick up to 3 tags",
+  "tagTechnology": "Technology",
+  "tagScience": "Science",
+  "tagHistory": "History",
+  "tagBiographies": "Biographies",
+  "tagCulture": "Culture",
+  "chooseTopicTitle": "What do you want to read?",
+  "popularTopics": "Popular topics",
+  "anyTopic": "Surprise me",
+  "searchTopic": "Or search for a topic",
+  "searchTopicHint": "e.g. space, coffee, Roman Empire",
+  "readingFrom": "From {source} · {language}",
+  "@readingFrom": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "startReading": "Start reading",
+  "topicExhausted": "You have read every article about \"{topic}\" on {source} ({language}).",
+  "@topicExhausted": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      },
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "noNewArticles": "No unread articles found this time. Please try again.",
+  "settingsTitle": "Profile & Settings",
+  "editNickname": "Edit nickname",
+  "nickname": "Nickname",
+  "changePhoto": "Change profile picture",
+  "chooseAnimal": "Choose an animal",
+  "useMyPhoto": "Or use your own photo",
+  "fromGallery": "Choose from gallery",
+  "takePhoto": "Take a photo",
+  "cameraHint": "Works on a real device (the Simulator has no camera)",
+  "removePhoto": "Remove my photo",
+  "photoUpdated": "Profile picture updated ({size} KB)",
+  "@photoUpdated": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "photoRemoved": "Your photo was removed",
+  "photoError": "Couldn't open photos. Please allow access in Settings.",
+  "languageSection": "Language",
+  "appLanguage": "App language",
+  "appLanguageHint": "Menus, messages and AI feedback",
+  "articleLanguage": "Random article language",
+  "articleLanguageHint": "Which Wikipedia new articles come from",
+  "ttsLanguage": "Voice (TTS) language",
+  "ttsLanguageHint": "AUTO reads in the language of each article",
+  "sourcesSection": "Data sources",
+  "sourceWikipediaDesc": "Free encyclopedia in English, Chinese and Thai",
+  "sourcesMore": "More sources",
+  "sourcesMoreHint": "Coming in future updates — new sources or plugins",
+  "comingSoon": "Soon",
+  "applyLanguage": "Apply language",
+  "restartTitle": "Restart the app?",
+  "restartMessage": "The new language takes effect after the app restarts. Restart now?",
+  "restartNow": "Restart now",
+  "restartLater": "Later",
+  "languageSavedForLater": "Saved. The new language will be used next time you open the app.",
+  "languagePending": "Saved — applies after restart",
+  "readingSection": "Reading",
+  "readingTimePerRound": "Reading time per session",
+  "displaySection": "Display",
+  "darkMode": "Dark Mode",
+  "logout": "Logout",
+  "logoutTitle": "Log out?",
+  "logoutMessage": "You'll need to log in again to see your history.",
+  "setupTitle": "Let's set things up",
+  "setupSubtitle": "A few basics before your first read. You can change these later in Settings.",
+  "setupProfilePicture": "Profile picture",
+  "setupStart": "Start reading"
+}

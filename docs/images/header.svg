@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="100%" role="img" aria-label="KEEP: a warm reading lamp glowing over an open book">
   <defs>
-    <radialGradient id="lamp" cx="0.5" cy="0.45" r="0.6">
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5">
       <stop offset="0" stop-color="#34D399" stop-opacity=".34"/>
       <stop offset=".45" stop-color="#FBBF24" stop-opacity=".2"/>
       <stop offset="1" stop-color="#FBBF24" stop-opacity="0"/>

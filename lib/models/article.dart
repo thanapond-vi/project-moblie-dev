@@ -12,6 +12,7 @@ class Article {
     required this.language,
     this.topic,
     this.headings = const [],
+    this.imageUrl,
   });
 
   /// แหล่งข้อมูล เช่น "wikipedia" (ดู ArticleSource)
@@ -34,6 +35,9 @@ class Article {
   /// ย่อหน้าที่เป็นหัวข้อของบทความ (หน้าอ่านแสดงเป็นตัวหนา) ว่าง = ไม่รู้ว่าบรรทัดไหนเป็นหัวข้อ
   final List<String> headings;
 
+  /// รูปนำของบทความ (Wikipedia page image) null = บทความไม่มีรูป
+  final String? imageUrl;
+
   bool isHeading(String paragraph) => headings.contains(paragraph);
 
   /// รหัสบทความที่ไม่ซ้ำกันข้ามแหล่ง/ภาษา ใช้กันการสุ่มเจอบทความที่เคยอ่านแล้ว
@@ -51,6 +55,12 @@ class Article {
   String get reference => content.length <= referenceMaxChars
       ? content
       : content.substring(0, referenceMaxChars);
+
+  /// เวลาอ่านโดยประมาณ (นาที): จีนอ่านราว 350 ตัวอักษร/นาที ภาษาอื่นราว 1000 ตัวอักษร/นาที
+  int get estimatedMinutes {
+    final perMinute = language == ContentLanguage.zh ? 350 : 1000;
+    return (content.length / perMinute).ceil().clamp(1, 999);
+  }
 
   /// แบ่งเป็นย่อหน้า (ใช้แสดงผลและให้ TTS อ่านทีละย่อหน้า)
   List<String> get paragraphs => content
@@ -70,6 +80,7 @@ class Article {
     'language': language.code,
     'topic': topic,
     'headings': headings,
+    'imageUrl': imageUrl,
   };
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
@@ -87,5 +98,6 @@ class Article {
     topic: (json['topic'] ?? json['category']) as String?,
     // เซสชันเก่าที่บันทึกก่อนมีหัวข้อ = ไม่มี key นี้
     headings: [for (final h in (json['headings'] as List?) ?? const []) '$h'],
+    imageUrl: json['imageUrl'] as String?,
   );
 }

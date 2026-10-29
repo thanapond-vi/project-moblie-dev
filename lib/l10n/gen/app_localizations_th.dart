@@ -9,7 +9,7 @@ class AppLocalizationsTh extends AppLocalizations {
   AppLocalizationsTh([String locale = 'th']) : super(locale);
 
   @override
-  String get tagline => 'อ่าน · จำ · สรุป ฝึกจับใจความด้วย Active Recall';
+  String get tagline => 'อ่าน · นึก · ทบทวน';
 
   @override
   String get cancel => 'ยกเลิก';
@@ -694,4 +694,242 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get setupStart => 'เริ่มใช้งาน';
+
+  @override
+  String get navLibrary => 'คลัง';
+
+  @override
+  String get navReview => 'ทบทวน';
+
+  @override
+  String get navStats => 'สถิติ';
+
+  @override
+  String get reviewComingSoonBody =>
+      'ระบบทบทวนแบบเว้นระยะจะหยิบบทความที่คุณใกล้ลืมกลับมาให้อ่านอีกครั้ง';
+
+  @override
+  String get statsComingSoonBody =>
+      'กราฟเวลาอ่านและคะแนนการจำของคุณจะอยู่ที่นี่';
+
+  @override
+  String streakDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ติดต่อกัน $count วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get streakStart => 'เริ่มนับวันติดกัน';
+
+  @override
+  String todayGoal(int done, int goal) {
+    return 'วันนี้ $done / $goal นาที';
+  }
+
+  @override
+  String get todayGoalMet => 'ครบเป้าวันนี้แล้ว';
+
+  @override
+  String randomArticleSubtitle(String language) {
+    return 'Wikipedia · $language · เลือกหมวดได้';
+  }
+
+  @override
+  String get historyTitle => 'ประวัติการอ่าน';
+
+  @override
+  String get scoreMastered => 'จำได้แม่น';
+
+  @override
+  String get scoreGood => 'จำได้ดี';
+
+  @override
+  String get scoreReview => 'ควรทบทวน';
+
+  @override
+  String scoreSemantics(int score, String level) {
+    return 'คะแนน $score, $level';
+  }
+
+  @override
+  String get tipTitle => 'เคล็ดลับการจำ';
+
+  @override
+  String get recallTip1 =>
+      'ปิดบทความแล้วเขียนสิ่งที่จำได้ก่อนเปิดดู ความพยายามนึกนี่แหละที่ทำให้จำได้นาน';
+
+  @override
+  String get recallTip2 =>
+      'เล่าเหมือนอธิบายให้เพื่อนฟัง คำง่ายๆ จะบอกว่าคุณเข้าใจจริงแค่ไหน';
+
+  @override
+  String get recallTip3 =>
+      'อ่านสั้นๆ ทุกวันดีกว่าอ่านยาวครั้งเดียว การอ่านต่อเนื่องช่วยให้ความจำไม่จางหาย';
+
+  @override
+  String get recallTip4 =>
+      'พลาดประเด็นสำคัญไป? พรุ่งนี้อ่านเฉพาะส่วนนั้นซ้ำ แล้วลองนึกอีกครั้ง';
+
+  @override
+  String get close => 'ปิด';
+
+  @override
+  String get topicSheetHint =>
+      'หมดเวลาแล้วคุณจะเขียนสิ่งที่จำได้ โดยไม่ย้อนกลับไปดูบทความ';
+
+  @override
+  String get recallNoteTitle => 'โน้ตชวนนึก';
+
+  @override
+  String get recallNoteLoading => 'กำลังตั้งคำถามให้คุณถือไว้ระหว่างอ่าน…';
+
+  @override
+  String get recallNoteFallback =>
+      'ถามตัวเองระหว่างอ่าน: ใจความหลักคืออะไร และสำคัญอย่างไร?';
+
+  @override
+  String get recallNoteHint => 'ตอบจากความจำตอนเขียนสรุป';
+
+  @override
+  String get bookmarkAdd => 'บันทึกบทความ';
+
+  @override
+  String get bookmarkRemove => 'เลิกบันทึก';
+
+  @override
+  String get bookmarkSaved => 'บันทึกบทความไว้แล้ว';
+
+  @override
+  String get bookmarkRemoved => 'เลิกบันทึกแล้ว';
+
+  @override
+  String readMinutesEstimate(int minutes) {
+    return 'อ่านราว $minutes นาที';
+  }
+
+  @override
+  String readingProgress(int percent) {
+    return 'อ่านไปแล้ว $percent%';
+  }
+
+  @override
+  String get keyPointsTitle => 'ประเด็นสำคัญ';
+
+  @override
+  String keyPointsCovered(int count) {
+    return 'เขียนถึงแล้ว ($count)';
+  }
+
+  @override
+  String keyPointsMissed(int count) {
+    return 'ยังขาด ($count)';
+  }
+
+  @override
+  String keyPointsSummary(int covered, int total) {
+    return 'เขียนถึง $covered จาก $total ประเด็น';
+  }
+
+  @override
+  String get keyPointCore => 'ใจความหลัก';
+
+  @override
+  String get accuracyTitle => 'ตรวจข้อมูลเหล่านี้อีกครั้ง';
+
+  @override
+  String get readAnother => 'อ่านบทความถัดไป';
+
+  @override
+  String get statusActive => 'นักอ่านต่อเนื่อง';
+
+  @override
+  String get statusReader => 'นักอ่าน';
+
+  @override
+  String memberSince(String month) {
+    return 'เป็นสมาชิกตั้งแต่ $month';
+  }
+
+  @override
+  String get statLogsSaved => 'บันทึกแล้ว';
+
+  @override
+  String get statReviewSuccess => 'ทบทวนสำเร็จ';
+
+  @override
+  String get statStreak => 'วันติดกัน';
+
+  @override
+  String get launchSound => 'เสียงตอนเปิดแอป';
+
+  @override
+  String get launchSoundHint =>
+      'เสียงโคมไฟกะพริบเบาๆ ตอนเปิด KEEP และจะเงียบเมื่อเครื่องเปิดโหมดปิดเสียง';
+
+  @override
+  String versionLabel(String version) {
+    return 'เวอร์ชัน $version';
+  }
+
+  @override
+  String get authStatusPill => 'ฝึกอ่านแบบ Active Recall';
+
+  @override
+  String get authFooter =>
+      'ประวัติการอ่านของคุณเห็นได้เฉพาะบัญชีของคุณเท่านั้น';
+
+  @override
+  String get forgotPassword => 'ลืมรหัสผ่าน?';
+
+  @override
+  String get resetTitle => 'ตั้งรหัสผ่านใหม่';
+
+  @override
+  String get resetBody => 'เราจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปที่อีเมลของคุณ';
+
+  @override
+  String get resetSend => 'ส่งลิงก์';
+
+  @override
+  String resetSent(String email) {
+    return 'ถ้ามีบัญชีของ $email ลิงก์ตั้งรหัสผ่านใหม่จะถูกส่งไปที่อีเมลนี้';
+  }
+
+  @override
+  String stepOf(int current, int total) {
+    return 'ขั้นที่ $current จาก $total';
+  }
+
+  @override
+  String get next => 'ถัดไป';
+
+  @override
+  String get back => 'ย้อนกลับ';
+
+  @override
+  String get setupStep1Title => 'ใครกำลังอ่าน?';
+
+  @override
+  String get setupStep2Title => 'อยากอ่านแบบไหน?';
+
+  @override
+  String get selectedLabel => 'เลือกอยู่';
+
+  @override
+  String ttsSpeed(String rate) {
+    return 'ความเร็วเสียงอ่าน $rate× แตะเพื่อเปลี่ยน';
+  }
+
+  @override
+  String get timeAlmostUp => 'ใกล้หมดเวลา';
+
+  @override
+  String get skipIntro => 'ข้ามหน้าเปิด';
+
+  @override
+  String get noData => 'ยังไม่มีข้อมูล';
 }

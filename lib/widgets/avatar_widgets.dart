@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../core/motion.dart';
+import '../core/spacing.dart';
 import '../l10n/l10n.dart';
 import '../models/user_profile.dart';
 import 'ui_helpers.dart';
@@ -75,40 +77,28 @@ class AvatarPicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.chooseAnimal, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            for (final preset in AvatarPreset.values)
-              SelectedScale(
-                selected: !usingPhoto && preset == selected,
-                child: Tooltip(
-                  message: preset.name,
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
+        const SizedBox(height: AppSpacing.sm),
+        // แถวตัวละครเลื่อนแนวนอน: ตัวที่เลือกมีกรอบสีหลัก + ป้ายเครื่องหมายถูก (ไม่ใช้สีอย่างเดียว)
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          child: Row(
+            children: [
+              for (final preset in AvatarPreset.values)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+                  child: _PresetChoice(
+                    preset: preset,
+                    selected: !usingPhoto && preset == selected,
                     onTap: () => onPreset(preset),
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          width: 3,
-                          color: !usingPhoto && preset == selected
-                              ? scheme.primary
-                              : Colors.transparent,
-                        ),
-                      ),
-                      child: UserAvatar(preset: preset, radius: 28),
-                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         Text(l10n.useMyPhoto, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -139,6 +129,72 @@ class AvatarPicker extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _PresetChoice extends StatelessWidget {
+  const _PresetChoice({
+    required this.preset,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AvatarPreset preset;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: preset.name,
+      excludeSemantics: true,
+      onTap: onTap,
+      child: SelectedScale(
+        selected: selected,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              AnimatedContainer(
+                duration: AppMotion.reduced(context)
+                    ? Duration.zero
+                    : AppMotion.select,
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    width: 3,
+                    color: selected
+                        ? scheme.primary
+                        : scheme.primary.withValues(alpha: 0),
+                  ),
+                ),
+                child: UserAvatar(preset: preset, radius: 28),
+              ),
+              if (selected)
+                PositionedDirectional(
+                  end: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: scheme.primary,
+                      border: Border.all(color: scheme.surface, width: 2),
+                    ),
+                    child: Icon(Icons.check, size: 14, color: scheme.onPrimary),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

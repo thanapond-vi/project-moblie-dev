@@ -69,3 +69,7 @@ android/key.properties
 
 # โฟลเดอร์ module เก่าของ IntelliJ ที่หลงมา
 /keep/
+
+# API key ที่เก็บเป็นไฟล์ (เช่น docs/.stitch_api_key สำหรับ Stitch MCP)
+.*_api_key
+*.api_key

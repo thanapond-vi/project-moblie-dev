@@ -20,6 +20,7 @@ class ReadingSession {
     required this.stage,
     required this.draftSummary,
     required this.updatedAt,
+    this.recallQuestion,
   });
 
   final Article article;
@@ -35,6 +36,9 @@ class ReadingSession {
   final String draftSummary;
   final DateTime updatedAt;
 
+  /// คำถามชวนนึก (Active Recall Note) ที่ AI ตั้งจากบทความ เก็บไว้จะได้ไม่ต้องเรียก AI ซ้ำตอนอ่านต่อ
+  final String? recallQuestion;
+
   int get remainingSeconds =>
       (limitSeconds - elapsedSeconds).clamp(0, limitSeconds);
 
@@ -45,6 +49,7 @@ class ReadingSession {
     int? elapsedSeconds,
     SessionStage? stage,
     String? draftSummary,
+    String? recallQuestion,
   }) => ReadingSession(
     article: article,
     limitSeconds: limitSeconds,
@@ -52,6 +57,7 @@ class ReadingSession {
     stage: stage ?? this.stage,
     draftSummary: draftSummary ?? this.draftSummary,
     updatedAt: DateTime.now(),
+    recallQuestion: recallQuestion ?? this.recallQuestion,
   );
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +67,7 @@ class ReadingSession {
     'stage': stage.name,
     'draftSummary': draftSummary,
     'updatedAt': updatedAt.toIso8601String(),
+    'recallQuestion': recallQuestion,
   };
 
   factory ReadingSession.fromJson(Map<String, dynamic> json) => ReadingSession(
@@ -71,5 +78,6 @@ class ReadingSession {
     draftSummary: json['draftSummary'] as String? ?? '',
     updatedAt:
         DateTime.tryParse(json['updatedAt'] as String? ?? '') ?? DateTime.now(),
+    recallQuestion: json['recallQuestion'] as String?,
   );
 }

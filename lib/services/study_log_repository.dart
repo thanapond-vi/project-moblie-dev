@@ -1,3 +1,4 @@
+import '../models/key_point.dart';
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,6 +56,7 @@ class StudyLogRepository {
     required int pageId,
     int? aiScore,
     String? aiFeedback,
+    List<KeyPoint> keyPoints = const [],
   }) {
     return _run(
       () => _logs.doc(logId).set({
@@ -70,6 +72,8 @@ class StudyLogRepository {
         'pageId': pageId, // id บทความในแหล่งข้อมูล ใช้กันสุ่มซ้ำ
         'aiScore': aiScore,
         'aiFeedback': aiFeedback,
+        // ประเด็นที่ AI ตรวจ (ครอบคลุม/ขาด) เปิดบันทึกเก่าก็ยังเห็นรายการเดิม
+        'keyPoints': [for (final p in keyPoints) p.toMap()],
         // ใช้เวลาของเซิร์ฟเวอร์ ไม่ใช่เวลาเครื่อง เพื่อให้ทุกเครื่องเรียงตรงกัน
         'createdAt': FieldValue.serverTimestamp(),
       }),
@@ -85,6 +89,7 @@ class StudyLogRepository {
     required List<String> tags,
     int? aiScore,
     String? aiFeedback,
+    List<KeyPoint> keyPoints = const [],
   }) {
     return _run(
       () => _logs.doc(logId).update({
@@ -92,6 +97,7 @@ class StudyLogRepository {
         'tags': tags,
         'aiScore': aiScore,
         'aiFeedback': aiFeedback,
+        'keyPoints': [for (final p in keyPoints) p.toMap()],
         'updatedAt': FieldValue.serverTimestamp(),
       }),
     );

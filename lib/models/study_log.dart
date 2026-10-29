@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'article_tag.dart';
 import 'content_language.dart';
+import 'key_point.dart';
 
 /// 1 เอกสารใน collection `study_logs` = การอ่านและสรุป 1 ครั้ง
 class StudyLog {
@@ -21,6 +22,7 @@ class StudyLog {
     required this.aiFeedback,
     required this.createdAt,
     required this.updatedAt,
+    this.keyPoints = const [],
   });
 
   /// document ID ของ Firestore (ไม่ได้เก็บเป็น field ในเอกสาร)
@@ -45,6 +47,9 @@ class StudyLog {
   final String? aiFeedback;
   final DateTime createdAt;
   final DateTime? updatedAt;
+
+  /// ประเด็นสำคัญที่ AI ตรวจตอนให้คะแนนล่าสุด (บันทึกเก่าไม่มี = ว่าง)
+  final List<KeyPoint> keyPoints;
 
   bool get isEvaluated => aiScore != null;
 
@@ -81,6 +86,7 @@ class StudyLog {
       // serverTimestamp จะเป็น null ชั่วขณะ ก่อนเซิร์ฟเวอร์ยืนยัน จึงใช้เวลาปัจจุบันแทน
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      keyPoints: KeyPoint.listFrom(data['keyPoints'] as List?),
     );
   }
 }

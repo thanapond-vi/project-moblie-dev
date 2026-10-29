@@ -46,6 +46,8 @@ dependencies:
   intl: ^0.20.2
   flutter_tts: ^4.2.5
   image_picker: ^1.2.4
+  package_info_plus: ^10.2.2
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,8 @@ flutter:
     - .env
     # รูปโปรไฟล์ตัวละครสัตว์ 5 แบบ (ตัดเป็นสี่เหลี่ยมจัตุรัส หน้าสัตว์อยู่กลาง)
     - assets/avatars/
+    # เสียงโคมไฟกะพริบตอนเปิดแอป (สังเคราะห์เอง ไม่มีลิขสิทธิ์ผู้อื่น)
+    - assets/sounds/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

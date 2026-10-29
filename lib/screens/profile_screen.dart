@@ -1,18 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/app_exception.dart';
 import '../core/app_restarter.dart';
 import '../core/validators.dart';
 import '../l10n/l10n.dart';
 import '../models/content_language.dart';
+import '../models/reading_stats.dart';
+import '../models/study_log.dart';
 import '../models/user_profile.dart';
 import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
 import '../services/profile_service.dart';
 import '../services/session_service.dart';
 import '../services/settings_service.dart';
 import '../services/sources/article_source.dart';
+import '../services/study_log_repository.dart';
 import '../widgets/avatar_widgets.dart';
+import '../widgets/keep_logo.dart';
+import '../widgets/stat_tile.dart';
 import '../widgets/ui_helpers.dart';
 import '../widgets/motion_widgets.dart';
 import '../core/spacing.dart';
@@ -31,6 +39,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _settings = SettingsService.instance;
   bool _signingOut = false;
 
+  /// ประวัติการอ่าน (ใช้นับสถิติในการ์ดโปรไฟล์) สร้าง stream ครั้งเดียว
+  late final Stream<List<StudyLog>> _logs = StudyLogRepository().watchLogs(
+    widget.user.uid,
+  );
+
   Future<void> _logout() async {
     final l10n = context.l10n;
     final ok = await confirmDialog(
@@ -47,6 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // ลืมข้อมูลของคนนี้ในหน่วยความจำ (เซสชันยังเก็บในเครื่อง ล็อกอินกลับมาก็อ่านต่อได้)
       SessionService.instance.detach();
       ProfileService.instance.detach();
+      BookmarkService.instance.clear();
       // ปิดทุกหน้าที่ซ้อนอยู่ให้เหลือหน้าแรก (AuthGate) ซึ่งจะแสดง AuthScreen เอง
       // ผู้ใช้จึงกดย้อนกลับไปหน้าที่ต้องล็อกอินไม่ได้
       if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
@@ -66,31 +80,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(
+          left: AppSpacing.md,
+          top: AppSpacing.xs,
+          right: AppSpacing.md,
+          bottom: AppSpacing.xxl,
+        ),
         children: staggered([
-          _ProfileHeader(user: widget.user),
-          const SizedBox(height: 24),
+          StreamBuilder<List<StudyLog>>(
+            stream: _logs,
+            builder: (context, snapshot) => _ProfileHeader(
+              user: widget.user,
+              // ยังโหลดไม่เสร็จ/โหลดไม่ได้ = ไม่มีสถิติ (การ์ดแสดงขีดแทนตัวเลข)
+              stats: snapshot.hasData
+                  ? ReadingStats.from(snapshot.data!)
+                  : null,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl),
           _SectionTitle(l10n.languageSection),
           const _LanguageSettings(),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
           _SectionTitle(l10n.sourcesSection),
           const _SourceSettings(),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
           _SectionTitle(l10n.readingSection),
           Card(
+            margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.readingTimePerRound),
-                  const SizedBox(height: 12),
+                  Text(
+                    l10n.readingTimePerRound,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
                   // ValueListenableBuilder: rebuild เฉพาะส่วนนี้เมื่อค่าใน SettingsService เปลี่ยน
                   ValueListenableBuilder<int>(
                     valueListenable: _settings.timerMinutes,
                     builder: (context, minutes, _) => SizedBox(
                       width: double.infinity,
                       child: SegmentedButton<int>(
+                        showSelectedIcon: false,
                         segments: [
                           for (final m in SettingsService.timerOptions)
                             ButtonSegment(
@@ -108,20 +141,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.xl),
           _SectionTitle(l10n.displaySection),
           Card(
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _settings.isDarkMode,
-              builder: (context, isDark, _) => SwitchListTile(
-                secondary: const Icon(Icons.dark_mode_outlined),
-                title: Text(l10n.darkMode),
-                value: isDark,
-                onChanged: _settings.setDarkMode,
-              ),
+            margin: EdgeInsets.zero,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                ValueListenableBuilder<bool>(
+                  valueListenable: _settings.isDarkMode,
+                  builder: (context, isDark, _) => SwitchListTile(
+                    secondary: const Icon(Icons.dark_mode_outlined),
+                    title: Text(l10n.darkMode),
+                    value: isDark,
+                    onChanged: _settings.setDarkMode,
+                  ),
+                ),
+                const Divider(indent: AppSpacing.md, endIndent: AppSpacing.md),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _settings.launchSound,
+                  builder: (context, on, _) => SwitchListTile(
+                    secondary: const Icon(Icons.volume_up_outlined),
+                    title: Text(l10n.launchSound),
+                    subtitle: Text(l10n.launchSoundHint),
+                    value: on,
+                    onChanged: _settings.setLaunchSound,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xxl),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
@@ -132,6 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
             label: Text(l10n.logout),
           ),
+          const SizedBox(height: AppSpacing.xxl),
+          const _VersionFooter(),
         ]),
       ),
     );
@@ -144,17 +196,35 @@ class _SectionTitle extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.only(start: 4, bottom: 8),
-    child: Text(text, style: Theme.of(context).textTheme.titleSmall),
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(
+        start: AppSpacing.xxs,
+        bottom: AppSpacing.xs,
+      ),
+      child: Semantics(
+        header: true,
+        child: Text(
+          text,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-/// ส่วนหัวโปรไฟล์: รูปโปรไฟล์ (แตะเพื่อเปลี่ยน) + ชื่อเล่น (แก้ได้) + อีเมล
+/// การ์ดโปรไฟล์: รูป (แตะเพื่อเปลี่ยน) + ชื่อเล่น (แก้ได้) + สถานะ · เป็นสมาชิกตั้งแต่ + อีเมล
+/// และสถิติ 3 ช่อง: บันทึกแล้ว / ทบทวนสำเร็จ (รอระบบทบทวน Phase B) / วันติดกัน
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.user});
+  const _ProfileHeader({required this.user, required this.stats});
 
   final User user;
+
+  /// null = ประวัติยังโหลดไม่เสร็จ
+  final ReadingStats? stats;
 
   Future<void> _changeAvatar(BuildContext context) {
     return showModalBottomSheet<void>(
@@ -205,67 +275,133 @@ class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final l10n = context.l10n;
+    final joined = user.metadata.creationTime;
+    final status = (stats?.streakDays ?? 0) > 0
+        ? l10n.statusActive
+        : l10n.statusReader;
+    final since = joined == null
+        ? null
+        : l10n.memberSince(
+            DateFormat.yMMM(
+              SettingsService.instance.appLanguage.value.code,
+            ).format(joined),
+          );
     return ValueListenableBuilder<UserProfile?>(
       valueListenable: ProfileService.instance.current,
       builder: (context, profile, _) => Card(
+        margin: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Tooltip(
-                message: l10n.changePhoto,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () => _changeAvatar(context),
-                  child: Stack(
-                    children: [
-                      UserAvatar.of(profile, radius: 40),
-                      PositionedDirectional(
-                        end: 0,
-                        bottom: 0,
-                        child: CircleAvatar(
-                          radius: 13,
-                          backgroundColor: theme.colorScheme.primary,
-                          child: Icon(
-                            Icons.photo_camera,
-                            size: 14,
-                            color: theme.colorScheme.onPrimary,
-                          ),
+              Row(
+                children: [
+                  // ทั้งรูป (72 px) เป็นปุ่มเปลี่ยนรูป: เป้าแตะใหญ่กว่า 48 dp
+                  Tooltip(
+                    message: l10n.changePhoto,
+                    // ป้ายสำหรับโปรแกรมอ่านหน้าจออยู่ที่ Semantics ด้านในแล้ว ไม่ให้อ่านซ้ำ
+                    excludeFromSemantics: true,
+                    child: Semantics(
+                      button: true,
+                      label: l10n.changePhoto,
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () => _changeAvatar(context),
+                        child: Stack(
+                          children: [
+                            UserAvatar.of(profile, radius: 36),
+                            PositionedDirectional(
+                              end: 0,
+                              bottom: 0,
+                              child: CircleAvatar(
+                                radius: 12,
+                                backgroundColor: scheme.primary,
+                                child: Icon(
+                                  Icons.photo_camera,
+                                  size: 14,
+                                  color: scheme.onPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      profile?.nickname ?? '...',
-                      style: theme.textTheme.titleLarge,
                     ),
-                    EmailText(
-                      user.email ?? '',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          profile?.nickname ?? '...',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          [status, ?since].join(' · '),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: scheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        EmailText(
+                          user.email ?? '',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.editNickname,
+                    icon: const Icon(Icons.edit_outlined),
+                    onPressed: profile == null
+                        ? null
+                        : () => showDialog<void>(
+                            context: context,
+                            builder: (_) =>
+                                _NicknameDialog(initial: profile.nickname),
+                          ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // สูงเท่ากันทุกช่อง แม้ป้ายบางช่องยาวจนขึ้นบรรทัดใหม่
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: StatTile(
+                        value: stats?.articles,
+                        label: l10n.statLogsSaved,
+                        color: scheme.primary,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    // ทบทวนสำเร็จ % มาจากระบบทบทวนแบบเว้นระยะ (Phase B) ตอนนี้แสดงขีดไว้ก่อน
+                    Expanded(
+                      child: StatTile(
+                        value: null,
+                        label: l10n.statReviewSuccess,
+                        color: scheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: StatTile(
+                        value: stats?.streakDays,
+                        label: l10n.statStreak,
+                        color: scheme.tertiary,
                       ),
                     ),
                   ],
                 ),
-              ),
-              IconButton(
-                tooltip: l10n.editNickname,
-                icon: const Icon(Icons.edit_outlined),
-                onPressed: profile == null
-                    ? null
-                    : () => showDialog<void>(
-                        context: context,
-                        builder: (_) =>
-                            _NicknameDialog(initial: profile.nickname),
-                      ),
               ),
             ],
           ),
@@ -431,8 +567,9 @@ class _LanguageSettingsState extends State<_LanguageSettings> {
     final pending = _settings.pendingLanguages.value != null;
 
     return Card(
+      margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -463,10 +600,10 @@ class _LanguageSettingsState extends State<_LanguageSettings> {
               selected: _tts,
               onChanged: (v) => setState(() => _tts = v),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             if (pending && !_changed)
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                 child: Text(
                   l10n.languagePending,
                   style: theme.textTheme.labelMedium?.copyWith(
@@ -516,7 +653,7 @@ class _LanguageRow<T> extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
           width: double.infinity,
           child: SegmentedButton<T>(
@@ -543,6 +680,8 @@ class _SourceSettings extends StatelessWidget {
     final l10n = context.l10n;
     final settings = SettingsService.instance;
     return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
       child: ValueListenableBuilder<String>(
         valueListenable: settings.sourceId,
         builder: (context, selected, _) => Column(
@@ -571,6 +710,39 @@ class _SourceSettings extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// ท้ายหน้า: โลโก้ + สโลแกน + เวอร์ชันของแอป (อ่านจากข้อมูลแอปจริง ไม่ได้พิมพ์เลขไว้เอง)
+class _VersionFooter extends StatelessWidget {
+  const _VersionFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.textTheme.labelSmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    return Column(
+      children: [
+        const KeepLogo(size: 32),
+        const SizedBox(height: AppSpacing.xs),
+        Text(context.l10n.tagline, style: muted),
+        FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (context, snapshot) {
+            final info = snapshot.data;
+            if (info == null) return const SizedBox.shrink();
+            return Text(
+              context.l10n.versionLabel(
+                '${info.version} (${info.buildNumber})',
+              ),
+              style: muted,
+            );
+          },
+        ),
+      ],
     );
   }
 }

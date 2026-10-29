@@ -31,6 +31,7 @@ class SettingsService {
   static const _keyTtsLanguage = 'ttsLanguage';
   static const _keyTtsRate = 'ttsRate';
   static const _keySource = 'articleSource';
+  static const _keyLaunchSound = 'launchSound';
 
   static const List<int> timerOptions = [15, 30, 45];
   static const int defaultTimer = 30;
@@ -48,6 +49,9 @@ class SettingsService {
 
   final ValueNotifier<int> timerMinutes = ValueNotifier(defaultTimer);
   final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
+
+  /// เสียงไฟกะพริบตอนเปิดแอป (ปิดได้ใน Settings) ค่าเริ่มต้น = เปิด
+  final ValueNotifier<bool> launchSound = ValueNotifier(true);
   final ValueNotifier<ContentLanguage> appLanguage = ValueNotifier(
     defaultLanguage,
   );
@@ -75,6 +79,7 @@ class SettingsService {
       final saved = prefs.getInt(_keyTimer) ?? defaultTimer;
       timerMinutes.value = timerOptions.contains(saved) ? saved : defaultTimer;
       isDarkMode.value = prefs.getBool(_keyDark) ?? false;
+      launchSound.value = prefs.getBool(_keyLaunchSound) ?? true;
       appLanguage.value = ContentLanguage.fromCode(
         prefs.getString(_keyAppLanguage),
       );
@@ -103,6 +108,11 @@ class SettingsService {
   Future<void> setDarkMode(bool value) async {
     isDarkMode.value = value;
     await _prefs?.setBool(_keyDark, value);
+  }
+
+  Future<void> setLaunchSound(bool value) async {
+    launchSound.value = value;
+    await _prefs?.setBool(_keyLaunchSound, value);
   }
 
   /// ตั้งค่าภาษาทั้ง 3 ค่าพร้อมกัน (จากปุ่ม "ยืนยันภาษา" ใน Settings / หน้าตั้งค่าเริ่มต้น)

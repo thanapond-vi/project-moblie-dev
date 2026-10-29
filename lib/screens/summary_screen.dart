@@ -5,10 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../core/app_exception.dart';
+import '../core/motion.dart';
 import '../core/theme.dart';
 import '../core/validators.dart';
 import '../l10n/l10n.dart';
 import '../models/article_tag.dart';
+import '../models/key_point.dart';
 import '../models/reading_session.dart';
 import '../models/study_log.dart';
 import '../services/session_service.dart';
@@ -16,10 +18,12 @@ import '../services/settings_service.dart';
 import '../services/slm_service.dart';
 import '../services/study_log_repository.dart';
 import '../widgets/animated_counter.dart';
+import '../widgets/start_session_sheet.dart';
 import '../widgets/score_badge.dart';
 import '../widgets/ui_helpers.dart';
 import '../widgets/motion_widgets.dart';
 import '../core/spacing.dart';
+import 'reading_screen.dart';
 
 /// หน้าจอ 4: เขียนสรุป + ให้ AI ประเมิน + เลือกแท็ก + บันทึก (CRUD: Create และ Update)
 ///
@@ -75,6 +79,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   int? _score;
   String? _feedback;
+
+  /// ประเด็นสำคัญที่ AI ตรวจ (ครอบคลุม/ขาด) และสิ่งที่เขียนผิดจากบทความ
+  List<KeyPoint> _keyPoints = const [];
+  List<String> _issues = const [];
   String? _model;
   String? _aiError;
   String _savedText = '';
@@ -104,6 +112,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       _persisted = true;
       _score = log.aiScore;
       _feedback = log.aiFeedback;
+      _keyPoints = log.keyPoints;
       _savedText = log.userSummary;
       _scoredText = log.userSummary;
       _controller.text = log.userSummary;
@@ -155,6 +164,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
         _score = result.score;
         _feedback = result.feedback;
         _model = result.model;
+        _keyPoints = result.keyPoints;
+        _issues = result.accuracyIssues;
         // ผู้ใช้ยังไม่ได้แตะแท็ก และไม่ใช่บันทึกเก่าที่มีแท็กอยู่แล้ว
         // → ใช้แท็กที่ AI แนะนำต่อท้ายแท็กเดิม (รวมไม่เกิน 3)
         if (!_tagsTouched && (!_isEdit || _savedTags.isEmpty)) {
@@ -190,6 +201,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
       _score = null;
       _feedback = null;
       _model = null;
+      _keyPoints = const [];
+      _issues = const [];
     });
     await _save();
     if (mounted && !_hasUnsavedChanges) setState(() => _aiError = null);
@@ -220,6 +233,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           pageId: session.article.pageId,
           aiScore: _score,
           aiFeedback: _feedback,
+          keyPoints: _keyPoints,
         );
         _persisted = true;
         _earnedMinutes = session.readingMinutes;
@@ -233,6 +247,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           tags: tags,
           aiScore: _score,
           aiFeedback: _feedback,
+          keyPoints: _keyPoints,
         );
       }
       _savedText = summary;
@@ -259,6 +274,39 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   void _done() => Navigator.popUntil(context, (route) => route.isFirst);
+
+  /// อ่านบทความถัดไปต่อเลย: เลือกหมวด → เปิดหน้าอ่านแทนหน้านี้ (กลับมาแล้วจะเจอหน้า Home)
+  Future<void> _readNext() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final topic = await showStartSessionSheet(context);
+    if (topic == null || !mounted) return;
+    // บทความที่เคยอ่านแล้ว (รวมเรื่องที่เพิ่งบันทึก) ห้ามสุ่มซ้ำ
+    final Set<String> readKeys;
+    try {
+      readKeys = {
+        for (final log in await _repo.watchLogs(user.uid).first)
+          if (log.readKey != null) log.readKey!,
+      };
+    } catch (_) {
+      if (mounted) {
+        showMessage(context, context.l10n.historyLoadError(''), isError: true);
+      }
+      return;
+    }
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ReadingScreen.start(
+          language: SettingsService.instance.articleLanguage.value,
+          topic: topic,
+          excludeKeys: readKeys,
+        ),
+      ),
+      (route) => route.isFirst,
+    );
+  }
 
   /// โหมดจากเซสชัน: เก็บร่างลงเครื่องทุกครั้งที่พิมพ์ (ยังไม่ได้ลง Firestore)
   ///
@@ -317,14 +365,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
               ),
               children: [
                 Text(_title, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xxs),
                 Text(
                   _isEdit ? l10n.editHint : l10n.recallHint,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 TextFormField(
                   controller: _controller,
                   enabled: !_busy,
@@ -347,9 +395,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   },
                   validator: Validators.summary,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 _TagEditor(tags: _tags, enabled: !_busy, onToggle: _toggleTag),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 FilledButton.icon(
                   onPressed: _busy ? null : _evaluateAndSave,
                   icon: _busy
@@ -371,7 +419,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 ),
                 // แก้แค่แท็ก (ข้อความเดิม) → บันทึกได้เลยไม่ต้องให้ AI ประเมินใหม่
                 if (_persisted && _tagsChanged && !_textChanged) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.xs),
                   OutlinedButton.icon(
                     onPressed: _busy ? null : _save,
                     icon: const Icon(Icons.sell_outlined),
@@ -379,18 +427,22 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                 ],
                 if (_aiError != null) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   EntranceFade(
-                    child: _AiErrorCard(
-                      message: _aiError!,
-                      busy: _busy,
-                      onRetry: _evaluateAndSave,
-                      onSaveWithoutScore: _saveWithoutScore,
+                    // liveRegion: ผลมาถึงทีหลัง → โปรแกรมอ่านหน้าจอประกาศให้รู้
+                    child: Semantics(
+                      liveRegion: true,
+                      child: _AiErrorCard(
+                        message: _aiError!,
+                        busy: _busy,
+                        onRetry: _evaluateAndSave,
+                        onSaveWithoutScore: _saveWithoutScore,
+                      ),
                     ),
                   ),
                 ],
                 if (_earnedMinutes != null) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   Center(
                     child: EarnedBadge(
                       label: l10n.earnedMinutes(_earnedMinutes!),
@@ -398,19 +450,25 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                 ],
                 if (_score != null || _feedback != null) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   EntranceFade(
-                    child: _ResultCard(
-                      score: _score,
-                      feedback: _feedback,
-                      model: _model,
-                      stale: _scoreIsStale,
+                    child: Semantics(
+                      liveRegion: true,
+                      child: _ResultCard(
+                        score: _score,
+                        feedback: _feedback,
+                        model: _model,
+                        stale: _scoreIsStale,
+                        keyPoints: _keyPoints,
+                        issues: _issues,
+                      ),
                     ),
                   ),
                 ],
                 if (_isEdit && _originalContent.isNotEmpty) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   Card(
+                    margin: EdgeInsets.zero,
                     clipBehavior: Clip.antiAlias,
                     child: ExpansionTile(
                       title: Text(l10n.viewOriginal),
@@ -430,7 +488,26 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                 ],
                 if (_persisted && !_hasUnsavedChanges) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.xl),
+                  // ไปต่อได้เฉพาะตอนไม่มีบทความค้าง (โหมดแก้บันทึกเก่าอาจมีเรื่องที่อ่านค้างอยู่)
+                  ValueListenableBuilder<ReadingSession?>(
+                    valueListenable: SessionService.instance.current,
+                    builder: (context, session, _) => session != null
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: FilledButton.tonalIcon(
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(52),
+                              ),
+                              onPressed: _busy ? null : _readNext,
+                              icon: const Icon(Icons.shuffle),
+                              label: Text(l10n.readAnother),
+                            ),
+                          ),
+                  ),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
@@ -482,7 +559,7 @@ class _TagEditor extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -507,12 +584,16 @@ class _TagEditor extends StatelessWidget {
   }
 }
 
+/// ผลประเมิน (แบบสงบตา): วงแหวนคะแนน + ระดับ, รายการประเด็นที่เขียนถึง/ยังขาด,
+/// ข้อมูลที่ควรตรวจ และคำแนะนำจาก AI ไม่มีแสงฟุ้ง ไม่มีรูปประกอบ
 class _ResultCard extends StatelessWidget {
   const _ResultCard({
     required this.score,
     required this.feedback,
     required this.model,
     required this.stale,
+    required this.keyPoints,
+    required this.issues,
   });
 
   final int? score;
@@ -521,78 +602,255 @@ class _ResultCard extends StatelessWidget {
 
   /// true = ผู้ใช้แก้ข้อความหลังได้คะแนนนี้แล้ว คะแนนจึงยังไม่ใช่ของข้อความปัจจุบัน
   final bool stale;
+  final List<KeyPoint> keyPoints;
+  final List<String> issues;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final l10n = context.l10n;
-    final headline = theme.textTheme.headlineSmall;
-    return Opacity(
+    final level = ScoreLevel.of(score);
+    final (levelBg, levelFg) = level.container(scheme);
+    final covered = keyPoints.where((p) => p.covered).toList();
+    final missed = keyPoints.where((p) => !p.covered).toList();
+    return AnimatedOpacity(
       opacity: stale ? 0.55 : 1,
+      duration: AppMotion.reduced(context) ? Duration.zero : AppMotion.select,
       child: Card(
+        margin: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (stale) ...[
-                Text(
-                  l10n.staleScore,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.error,
-                  ),
+                Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 16, color: scheme.tertiary),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        l10n.staleScore,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: scheme.tertiary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.md),
               ],
               Row(
                 children: [
-                  ScoreBadge(score: score, size: 64),
-                  const SizedBox(width: 16),
+                  if (score != null)
+                    ScoreRing(score: score!)
+                  else
+                    ScoreBadge(score: null, size: 72),
+                  const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           l10n.scoreLabel,
-                          style: theme.textTheme.labelLarge,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
                         ),
-                        score == null
-                            ? Text(l10n.notEvaluatedYet, style: headline)
-                            // คะแนนวิ่งนับขึ้นจาก 0 ทุกครั้งที่ได้ผลใหม่
-                            : Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  AnimatedCounter(
-                                    key: ValueKey(score),
-                                    value: score!,
-                                    style: headline,
+                        const SizedBox(height: AppSpacing.xs),
+                        // ระดับ: ไอคอน + ข้อความ บนพื้นทึบ (ไม่ได้บอกด้วยสีอย่างเดียว)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xxs,
+                          ),
+                          decoration: ShapeDecoration(
+                            color: levelBg,
+                            shape: const StadiumBorder(),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(level.icon, size: 16, color: levelFg),
+                              const SizedBox(width: AppSpacing.xxs),
+                              Flexible(
+                                child: Text(
+                                  score == null
+                                      ? l10n.notEvaluatedYet
+                                      : level.label(l10n),
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: levelFg,
                                   ),
-                                  Text(' / 100', style: headline),
-                                ],
+                                ),
                               ),
-                        if (model != null)
+                            ],
+                          ),
+                        ),
+                        if (keyPoints.isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            l10n.keyPointsSummary(
+                              covered.length,
+                              keyPoints.length,
+                            ),
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                        if (model != null) ...[
+                          const SizedBox(height: AppSpacing.xxs),
                           Text(
                             l10n.evaluatedBy(model!),
-                            style: theme.textTheme.labelSmall,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
                           ),
+                        ],
                       ],
                     ),
                   ),
                 ],
               ),
+              if (keyPoints.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.xl),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.keyPointsTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                if (covered.isNotEmpty)
+                  _PointGroup(
+                    title: l10n.keyPointsCovered(covered.length),
+                    icon: Icons.check_circle,
+                    color: scheme.primary,
+                    points: covered,
+                  ),
+                if (missed.isNotEmpty)
+                  _PointGroup(
+                    title: l10n.keyPointsMissed(missed.length),
+                    icon: Icons.radio_button_unchecked,
+                    color: scheme.tertiary,
+                    points: missed,
+                  ),
+              ],
+              if (issues.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.accuracyTitle,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: scheme.error,
+                  ),
+                ),
+                for (final issue in issues)
+                  _PointRow(
+                    icon: Icons.error_outline,
+                    color: scheme.error,
+                    text: issue,
+                  ),
+              ],
               if (feedback != null) ...[
-                const Divider(height: 24),
-                Text(l10n.aiFeedbackTitle, style: theme.textTheme.labelLarge),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.lg),
+                const Divider(),
+                const SizedBox(height: AppSpacing.md),
+                Text(l10n.aiFeedbackTitle, style: theme.textTheme.titleMedium),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   feedback!,
-                  style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    height: 1.7,
+                    color: scheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// กลุ่มประเด็น "เขียนถึงแล้ว" / "ยังขาด" (หัวกลุ่มบอกด้วยข้อความ ไม่ใช่สีอย่างเดียว)
+class _PointGroup extends StatelessWidget {
+  const _PointGroup({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.points,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color color;
+  final List<KeyPoint> points;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.labelMedium?.copyWith(color: color),
+          ),
+          for (final p in points)
+            _PointRow(icon: icon, color: color, text: p.point, core: p.core),
+        ],
+      ),
+    );
+  }
+}
+
+class _PointRow extends StatelessWidget {
+  const _PointRow({
+    required this.icon,
+    required this.color,
+    required this.text,
+    this.core = false,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String text;
+  final bool core;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(icon, size: 18, color: color),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: text),
+                  if (core)
+                    TextSpan(
+                      text: '  · ${context.l10n.keyPointCore}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
+              ),
+              style: theme.textTheme.bodyMedium,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -618,7 +876,7 @@ class _AiErrorCard extends StatelessWidget {
     return Card(
       color: scheme.errorContainer,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -628,14 +886,14 @@ class _AiErrorCard extends StatelessWidget {
                 context,
               ).textTheme.titleSmall?.copyWith(color: scheme.onErrorContainer),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xxs),
             Text(
               message,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(color: scheme.onErrorContainer),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: 8,
               runSpacing: 8,

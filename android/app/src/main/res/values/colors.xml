@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- พื้นหลังตอนเปิดแอปก่อน Flutter พร้อม: สีกระดาษ (โหมดสว่าง) ตรงกับหน้าเปิดแอป -->
+    <color name="launch_background">#F6F1E7</color>
+</resources>

@@ -11,6 +11,7 @@ import '../l10n/l10n.dart';
 import '../models/ai_evaluation.dart';
 import '../models/article_tag.dart';
 import '../models/content_language.dart';
+import '../models/key_point.dart';
 
 /// คุยกับ AI บน Groq (LLM `qwen/qwen3.8-27b` ของ Alibaba) ใช้ 2 งาน:
 /// 1) [evaluate]: ให้คะแนนคำสรุป + Feedback + แนะนำแท็ก (ตอบเป็น JSON)
@@ -145,6 +146,38 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
     return text;
   }
 
+  /// คำถามชวนนึก 1 ข้อจากบทความ (Active Recall Note บนหน้าอ่าน)
+  /// ให้ผู้อ่านถือคำถามไว้ในใจระหว่างอ่าน แล้วค่อยตอบตอนเขียนสรุป
+  Future<String> recallQuestion({
+    required String title,
+    required String reference,
+    required ContentLanguage language,
+  }) async {
+    final reply = await _chat(
+      system:
+          'You help a student practise active recall. Read the article and '
+          'write ONE open question (max 25 words) about its single most '
+          'important idea, so the reader keeps it in mind while reading and '
+          'can answer it from memory afterwards. Ask "why" or "how", not a '
+          'yes/no or a date. Reply with the question only, no quotes, no '
+          'preamble. Write it in ${language.aiLanguage}.',
+      user: 'Title: $title\n\n$reference',
+      json: false,
+      temperature: 0.3,
+    );
+    final text = reply.content
+        .replaceAll(RegExp(r'<think>[\s\S]*?</think>'), '')
+        .replaceAll('"', '')
+        .trim()
+        .split('\n')
+        .first
+        .trim();
+    if (text.isEmpty || text.length > 240) {
+      throw AppException(tr.errAiBadFormat);
+    }
+    return text;
+  }
+
   static const _maxRetryWait = Duration(seconds: 10);
 
   /// เวลาที่ควรรอก่อนลองใหม่ จาก header retry-after (วินาที) ของ Groq
@@ -266,6 +299,11 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
       feedback: feedback.isEmpty ? tr.aiNoFeedback : feedback,
       model: model,
       tags: tags,
+      keyPoints: KeyPoint.listFrom(json['keyPoints'] as List?),
+      accuracyIssues: [
+        for (final i in (json['accuracyIssues'] as List?) ?? const [])
+          if ('$i'.trim().isNotEmpty) '$i'.trim(),
+      ],
     );
   }
 }

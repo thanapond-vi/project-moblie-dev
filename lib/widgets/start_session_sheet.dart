@@ -13,7 +13,6 @@ import '../core/spacing.dart';
 Future<ReadingTopic?> showStartSessionSheet(BuildContext context) {
   return showModalBottomSheet<ReadingTopic>(
     context: context,
-    showDragHandle: true,
     isScrollControlled: true, // ให้แผ่นเลื่อนขึ้นเหนือคีย์บอร์ดตอนพิมพ์ค้นหา
     builder: (context) => const _StartSessionSheet(),
   );
@@ -65,28 +64,55 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.chooseTopicTitle, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 4),
-            Text(
-              l10n.readingFrom(
-                source.name,
-                settings.articleLanguage.value.label,
-              ),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.xs),
+                    child: Text(
+                      l10n.chooseTopicTitle,
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.close,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(l10n.popularTopics, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
+            // แหล่ง·ภาษา และเวลาอ่านต่อรอบ (ตั้งค่าได้ใน Settings)
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                _InfoPill(
+                  icon: Icons.public,
+                  label:
+                      '${source.name} · ${settings.articleLanguage.value.label}',
+                ),
+                _InfoPill(
+                  icon: Icons.timer_outlined,
+                  label: '${settings.timerMinutes.value} ${l10n.unitMinutes}',
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Text(l10n.popularTopics, style: theme.textTheme.titleSmall),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
               children: [
                 EntranceFade(
                   child: SelectedScale(
                     selected: !searching && _preset == null,
                     child: ChoiceChip(
+                      // คงไอคอนหมวดไว้ตอนเลือก (สถานะเลือกดูจากสีพื้น + ขยายเล็กน้อย)
+                      showCheckmark: false,
                       avatar: const Icon(Icons.shuffle, size: 18),
                       label: Text(l10n.anyTopic),
                       selected: !searching && _preset == null,
@@ -103,6 +129,7 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
                     child: SelectedScale(
                       selected: !searching && _preset == tag,
                       child: ChoiceChip(
+                        showCheckmark: false,
                         avatar: Icon(tag.icon, size: 18),
                         label: Text(tag.label(l10n)),
                         selected: !searching && _preset == tag,
@@ -115,9 +142,9 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
                   ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.xl),
             Text(l10n.searchTopic, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             TextField(
               controller: _searchController,
               textInputAction: TextInputAction.search,
@@ -129,14 +156,73 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
               onChanged: (_) => setState(() {}),
               onSubmitted: (_) => Navigator.pop(context, _topic),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
             FilledButton.icon(
               onPressed: () => Navigator.pop(context, _topic),
               icon: const Icon(Icons.auto_stories),
               label: Text(l10n.startReading),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  size: 16,
+                  color: theme.colorScheme.tertiary,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(
+                    l10n.topicSheetHint,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// ป้ายข้อมูลเล็ก (ไอคอน + ข้อความ) บนพื้นผิวขั้นถัดไป
+class _InfoPill extends StatelessWidget {
+  const _InfoPill({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xxs,
+      ),
+      decoration: ShapeDecoration(
+        color: scheme.surfaceContainer,
+        shape: const StadiumBorder(),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: scheme.secondary),
+          const SizedBox(width: AppSpacing.xxs),
+          Flexible(
+            child: Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

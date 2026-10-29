@@ -35,6 +35,18 @@ class AuthService {
 
   Future<void> signOut() => _run(_auth.signOut);
 
+  /// ส่งอีเมลตั้งรหัสผ่านใหม่ (Firebase ส่งให้เอง)
+  /// ถ้าเปิดการป้องกันการเดาอีเมลไว้ Firebase จะตอบสำเร็จแม้ไม่มีบัญชีนี้ หน้าจอจึงต้องพูดแบบกลางๆ
+  Future<void> sendPasswordReset(String email) => _run(() async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseAuthException catch (e) {
+      // ไม่มีบัญชีนี้ = ตอบเหมือนส่งสำเร็จ ไม่บอกคนอื่นว่าอีเมลไหนมีบัญชี
+      if (e.code != 'user-not-found') rethrow;
+    }
+    return null;
+  });
+
   /// รูปแบบเดียวกันทุก method: await + timeout + แปลง error เป็น AppException
   Future<void> _run(Future<Object?> Function() action) async {
     try {

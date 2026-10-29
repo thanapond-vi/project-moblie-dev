@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../core/app_exception.dart';
+import '../core/motion.dart';
 import '../core/validators.dart';
 import '../l10n/l10n.dart';
 import '../models/content_language.dart';
@@ -12,7 +13,6 @@ import '../services/profile_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/avatar_widgets.dart';
 import '../widgets/ui_helpers.dart';
-import '../widgets/motion_widgets.dart';
 import '../core/spacing.dart';
 
 /// หน้าตั้งค่าเริ่มต้น (เปิดครั้งแรกหลังสมัคร): เลือกสิ่งพื้นฐานที่จำเป็น
@@ -42,14 +42,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late int _minutes = _settings.timerMinutes.value;
   bool _saving = false;
 
+  /// 0 = ขั้นโปรไฟล์ (ชื่อเล่น + รูป), 1 = ขั้นการอ่าน (ภาษา + เวลาต่อรอบ)
+  int _step = 0;
+  static const _steps = 2;
+
+  void _next() {
+    if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _step = 1);
+  }
+
   @override
   void dispose() {
     _nickname.dispose();
     super.dispose();
   }
 
+  /// ชื่อเล่นถูกตรวจแล้วตอนกด "ถัดไป" (ขั้นนี้ไม่มีช่องชื่อเล่นให้ตรวจซ้ำ)
   Future<void> _finish() async {
-    if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
     setState(() => _saving = true);
     try {
@@ -94,113 +104,177 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
 
     // ห้ามปิดหน้านี้ด้วยปุ่มย้อนกลับ ต้องกด "เริ่มใช้งาน" (บันทึกโปรไฟล์) ก่อน
+    // ขั้นที่ 2: ปุ่มย้อนกลับของเครื่อง = กลับไปขั้นที่ 1
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _step > 0 && !_saving) setState(() => _step = 0);
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.setupTitle),
           automaticallyImplyLeading: false,
         ),
         body: SafeArea(
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.only(
-                left: AppSpacing.lg,
-                top: AppSpacing.xs,
-                right: AppSpacing.lg,
-                bottom: AppSpacing.xxl,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: _StepBar(step: _step, total: _steps),
               ),
-              children: staggered([
-                Text(
-                  l10n.setupSubtitle,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+              Expanded(
+                // Form ครอบทั้งสองขั้น (ไม่อยู่ในขั้นที่ 1): ระหว่างเปลี่ยนขั้นจะมีขั้นที่ 1 สองชุดซ้อนกันได้
+                // ถ้า Form อยู่ข้างใน GlobalKey จะซ้ำกันแล้วแอปแครช
+                child: Form(
+                  key: _formKey,
+                  // เปลี่ยนขั้นแบบ fade + เลื่อนสั้นๆ (ปิดเมื่อเปิด Reduce Motion)
+                  child: AnimatedSwitcher(
+                    duration: AppMotion.reduced(context)
+                        ? Duration.zero
+                        : AppMotion.page,
+                    switchInCurve: AppMotion.pageEnter,
+                    switchOutCurve: AppMotion.pageEnter,
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween(
+                          begin: AppMotion.pageSlideFrom,
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    ),
+                    child: _step == 0
+                        ? _profileStep(context)
+                        : _readingStep(context),
                   ),
                 ),
-                const SizedBox(height: 20),
-                Center(
-                  child: UserAvatar(preset: _preset, photo: _photo, radius: 48),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _nickname,
-                  enabled: !_saving,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: l10n.nickname,
-                    prefixIcon: const Icon(Icons.badge_outlined),
-                  ),
-                  validator: (v) => Validators.nickname(v, l10n),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  l10n.setupProfilePicture,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                AvatarPicker(
-                  selected: _preset,
-                  photo: _photo,
-                  // เลือกตัวละคร = ไม่ใช้รูปตัวเอง (ใช้ได้ทีละแบบ)
-                  onPreset: (p) => setState(() {
-                    _preset = p;
-                    _photo = null;
-                  }),
-                  onPhoto: (bytes) => setState(() => _photo = bytes),
-                ),
-                const SizedBox(height: 24),
-                Text(l10n.appLanguage, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 8),
-                _choice<ContentLanguage>(
-                  values: ContentLanguage.values,
-                  label: (l) => l.label,
-                  selected: _appLanguage,
-                  onChanged: (l) => setState(() => _appLanguage = l),
-                ),
-                const SizedBox(height: 20),
-                Text(l10n.articleLanguage, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 8),
-                _choice<ContentLanguage>(
-                  values: ContentLanguage.values,
-                  label: (l) => l.label,
-                  selected: _articleLanguage,
-                  onChanged: (l) => setState(() => _articleLanguage = l),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  l10n.readingTimePerRound,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                _choice<int>(
-                  values: SettingsService.timerOptions,
-                  label: l10n.minutesValue,
-                  selected: _minutes,
-                  onChanged: (m) => setState(() => _minutes = m),
-                ),
-                const SizedBox(height: 32),
-                FilledButton.icon(
-                  onPressed: _saving ? null : _finish,
-                  icon: _saving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2.5),
-                        )
-                      : const Icon(Icons.auto_stories),
-                  label: Text(l10n.setupStart),
-                ),
-              ]),
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  ListView _stepList(String key, List<Widget> children) => ListView(
+    key: ValueKey(key),
+    padding: const EdgeInsets.only(
+      left: AppSpacing.lg,
+      top: AppSpacing.lg,
+      right: AppSpacing.lg,
+      bottom: AppSpacing.xxl,
+    ),
+    children: children,
+  );
+
+  /// ขั้นที่ 1: ชื่อเล่น + รูปโปรไฟล์
+  Widget _profileStep(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = context.l10n;
+    return _stepList('profile', [
+      Text(l10n.setupStep1Title, style: theme.textTheme.headlineSmall),
+      const SizedBox(height: AppSpacing.xxs),
+      Text(
+        l10n.setupSubtitle,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.xl),
+      Center(
+        child: UserAvatar(preset: _preset, photo: _photo, radius: 48),
+      ),
+      const SizedBox(height: AppSpacing.xl),
+      TextFormField(
+        controller: _nickname,
+        enabled: !_saving,
+        textInputAction: TextInputAction.done,
+        onFieldSubmitted: (_) => _next(),
+        decoration: InputDecoration(
+          labelText: l10n.nickname,
+          prefixIcon: const Icon(Icons.badge_outlined),
+        ),
+        validator: (v) => Validators.nickname(v, l10n),
+      ),
+      const SizedBox(height: AppSpacing.xl),
+      Text(l10n.setupProfilePicture, style: theme.textTheme.titleMedium),
+      const SizedBox(height: AppSpacing.sm),
+      AvatarPicker(
+        selected: _preset,
+        photo: _photo,
+        // เลือกตัวละคร = ไม่ใช้รูปตัวเอง (ใช้ได้ทีละแบบ)
+        onPreset: (p) => setState(() {
+          _preset = p;
+          _photo = null;
+        }),
+        onPhoto: (bytes) => setState(() => _photo = bytes),
+      ),
+      const SizedBox(height: AppSpacing.xxl),
+      FilledButton.icon(
+        onPressed: _next,
+        icon: const Icon(Icons.arrow_forward),
+        label: Text(l10n.next),
+      ),
+    ]);
+  }
+
+  /// ขั้นที่ 2: ภาษาแอป + ภาษาบทความ + เวลาอ่านต่อรอบ
+  Widget _readingStep(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = context.l10n;
+    return _stepList('reading', [
+      Text(l10n.setupStep2Title, style: theme.textTheme.headlineSmall),
+      const SizedBox(height: AppSpacing.xl),
+      Text(l10n.appLanguage, style: theme.textTheme.titleMedium),
+      const SizedBox(height: AppSpacing.xs),
+      _choice<ContentLanguage>(
+        values: ContentLanguage.values,
+        label: (l) => l.label,
+        selected: _appLanguage,
+        onChanged: (l) => setState(() => _appLanguage = l),
+      ),
+      const SizedBox(height: AppSpacing.lg),
+      Text(l10n.articleLanguage, style: theme.textTheme.titleMedium),
+      const SizedBox(height: AppSpacing.xs),
+      _choice<ContentLanguage>(
+        values: ContentLanguage.values,
+        label: (l) => l.label,
+        selected: _articleLanguage,
+        onChanged: (l) => setState(() => _articleLanguage = l),
+      ),
+      const SizedBox(height: AppSpacing.lg),
+      Text(l10n.readingTimePerRound, style: theme.textTheme.titleMedium),
+      const SizedBox(height: AppSpacing.xs),
+      _choice<int>(
+        values: SettingsService.timerOptions,
+        label: l10n.minutesValue,
+        selected: _minutes,
+        onChanged: (m) => setState(() => _minutes = m),
+      ),
+      const SizedBox(height: AppSpacing.xxl),
+      FilledButton.icon(
+        onPressed: _saving ? null : _finish,
+        icon: _saving
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              )
+            : const Icon(Icons.auto_stories),
+        label: Text(l10n.setupStart),
+      ),
+      const SizedBox(height: AppSpacing.xs),
+      TextButton.icon(
+        onPressed: _saving ? null : () => setState(() => _step = 0),
+        icon: const Icon(Icons.arrow_back),
+        label: Text(l10n.back),
+      ),
+    ]);
   }
 
   Widget _choice<T>({
@@ -219,6 +293,58 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
         selected: {selected},
         onSelectionChanged: _saving ? null : (s) => onChanged(s.first),
+      ),
+    );
+  }
+}
+
+/// แถบขั้นตอน: แท่งเท่าจำนวนขั้น (ขั้นที่ผ่าน/อยู่ = สีหลัก) + "ขั้นที่ 1 จาก 2"
+class _StepBar extends StatelessWidget {
+  const _StepBar({required this.step, required this.total});
+
+  final int step;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final label = context.l10n.stepOf(step + 1, total);
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              for (var i = 0; i < total; i++) ...[
+                if (i > 0) const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: AnimatedContainer(
+                    duration: AppMotion.reduced(context)
+                        ? Duration.zero
+                        : AppMotion.select,
+                    height: 4,
+                    decoration: ShapeDecoration(
+                      color: i <= step
+                          ? scheme.primary
+                          : scheme.surfaceContainerHigh,
+                      shape: const StadiumBorder(),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }

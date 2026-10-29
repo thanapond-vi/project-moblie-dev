@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/spacing.dart';
 import '../l10n/l10n.dart';
 
 /// แสดงข้อความแจ้งเตือนด้านล่างจอ (ใช้แทนการ throw error ให้ผู้ใช้เห็น)
@@ -64,7 +65,7 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -73,9 +74,9 @@ class ErrorView extends StatelessWidget {
               size: 48,
               color: Theme.of(context).colorScheme.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),

@@ -9,8 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get tagline =>
-      'Read · Recall · Summarize — practice with Active Recall';
+  String get tagline => 'Read · Recall · Reflect';
 
   @override
   String get cancel => 'Cancel';
@@ -652,7 +651,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Coming in future updates — new sources or plugins';
 
   @override
-  String get comingSoon => 'Soon';
+  String get comingSoon => 'Coming soon';
 
   @override
   String get applyLanguage => 'Apply language';
@@ -711,4 +710,244 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupStart => 'Start reading';
+
+  @override
+  String get navLibrary => 'Library';
+
+  @override
+  String get navReview => 'Review';
+
+  @override
+  String get navStats => 'Stats';
+
+  @override
+  String get reviewComingSoonBody =>
+      'Spaced review will bring back the articles you are about to forget.';
+
+  @override
+  String get statsComingSoonBody =>
+      'Charts of your reading time and recall scores will live here.';
+
+  @override
+  String streakDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count day streak',
+      one: '1 day streak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get streakStart => 'Start a streak';
+
+  @override
+  String todayGoal(int done, int goal) {
+    return 'Today $done / $goal min';
+  }
+
+  @override
+  String get todayGoalMet => 'Today\'s goal done';
+
+  @override
+  String randomArticleSubtitle(String language) {
+    return 'Wikipedia · $language · pick a topic';
+  }
+
+  @override
+  String get historyTitle => 'Reading history';
+
+  @override
+  String get scoreMastered => 'Mastered';
+
+  @override
+  String get scoreGood => 'Solid';
+
+  @override
+  String get scoreReview => 'Review again';
+
+  @override
+  String scoreSemantics(int score, String level) {
+    return 'Score $score, $level';
+  }
+
+  @override
+  String get tipTitle => 'Recall tip';
+
+  @override
+  String get recallTip1 =>
+      'Close the article and write what you remember before checking. The effort of recalling is what makes it stick.';
+
+  @override
+  String get recallTip2 =>
+      'Explain it as if to a friend. Plain words show what you really understood.';
+
+  @override
+  String get recallTip3 =>
+      'A short read every day beats one long session. A streak keeps the memory warm.';
+
+  @override
+  String get recallTip4 =>
+      'Missed a key point? Reread just that part tomorrow, then recall it again.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get topicSheetHint =>
+      'After the timer, you\'ll write what you remember without looking back.';
+
+  @override
+  String get recallNoteTitle => 'Active recall note';
+
+  @override
+  String get recallNoteLoading => 'Thinking of a question to keep in mind…';
+
+  @override
+  String get recallNoteFallback =>
+      'Keep asking yourself: what is the main idea, and why does it matter?';
+
+  @override
+  String get recallNoteHint =>
+      'Answer it from memory when you write your summary.';
+
+  @override
+  String get bookmarkAdd => 'Save article';
+
+  @override
+  String get bookmarkRemove => 'Remove from saved';
+
+  @override
+  String get bookmarkSaved => 'Article saved';
+
+  @override
+  String get bookmarkRemoved => 'Removed from saved';
+
+  @override
+  String readMinutesEstimate(int minutes) {
+    return '~$minutes min read';
+  }
+
+  @override
+  String readingProgress(int percent) {
+    return 'Read $percent%';
+  }
+
+  @override
+  String get keyPointsTitle => 'Key points';
+
+  @override
+  String keyPointsCovered(int count) {
+    return 'Covered ($count)';
+  }
+
+  @override
+  String keyPointsMissed(int count) {
+    return 'Missed ($count)';
+  }
+
+  @override
+  String keyPointsSummary(int covered, int total) {
+    return '$covered of $total key points covered';
+  }
+
+  @override
+  String get keyPointCore => 'Core';
+
+  @override
+  String get accuracyTitle => 'Check these facts';
+
+  @override
+  String get readAnother => 'Read another article';
+
+  @override
+  String get statusActive => 'Active reader';
+
+  @override
+  String get statusReader => 'Reader';
+
+  @override
+  String memberSince(String month) {
+    return 'Member since $month';
+  }
+
+  @override
+  String get statLogsSaved => 'Logs saved';
+
+  @override
+  String get statReviewSuccess => 'Review success';
+
+  @override
+  String get statStreak => 'Day streak';
+
+  @override
+  String get launchSound => 'Launch sound';
+
+  @override
+  String get launchSoundHint =>
+      'A soft lamp flicker when KEEP opens. Stays quiet when your phone is on silent.';
+
+  @override
+  String versionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get authStatusPill => 'Active recall reading';
+
+  @override
+  String get authFooter =>
+      'Your reading history is visible only to your account.';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetTitle => 'Reset password';
+
+  @override
+  String get resetBody => 'We\'ll email you a link to set a new password.';
+
+  @override
+  String get resetSend => 'Send link';
+
+  @override
+  String resetSent(String email) {
+    return 'If an account exists for $email, a reset link is on its way.';
+  }
+
+  @override
+  String stepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get setupStep1Title => 'Who\'s reading?';
+
+  @override
+  String get setupStep2Title => 'How do you like to read?';
+
+  @override
+  String get selectedLabel => 'Selected';
+
+  @override
+  String ttsSpeed(String rate) {
+    return 'Reading speed $rate×, tap to change';
+  }
+
+  @override
+  String get timeAlmostUp => 'Almost time';
+
+  @override
+  String get skipIntro => 'Skip intro';
+
+  @override
+  String get noData => 'no data yet';
 }

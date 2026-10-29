@@ -6,13 +6,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/app_restarter.dart';
+import 'core/motion.dart';
 import 'core/navigation.dart';
 import 'core/theme.dart';
 import 'firebase_options.dart';
 import 'l10n/l10n.dart';
 import 'models/content_language.dart';
 import 'screens/auth_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/launch_screen.dart';
+import 'screens/app_shell.dart';
 import 'services/auth_service.dart';
 import 'services/settings_service.dart';
 
@@ -71,16 +73,49 @@ class KeepApp extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
         navigatorObservers: [routeObserver],
-        home: const AuthGate(),
+        home: const LaunchGate(),
       ),
     );
   }
 }
 
+/// เล่นหน้าเปิดแอป (โลโก้ + ไฟกะพริบ) ก่อน แล้วค่อยค่อยๆ เปลี่ยนไปหน้าแรกจริง (AuthGate)
+class LaunchGate extends StatefulWidget {
+  const LaunchGate({super.key});
+
+  @override
+  State<LaunchGate> createState() => _LaunchGateState();
+}
+
+class _LaunchGateState extends State<LaunchGate> {
+  bool _launched = false;
+
+  Widget _launchScreen(BuildContext context) {
+    final screen = LaunchScreen(
+      onDone: () => setState(() => _launched = true),
+      sound: SettingsService.instance.launchSound.value,
+    );
+    // ล็อกอินแล้ว = ใช้ธีมที่ผู้ใช้ตั้งไว้ / ยังไม่เคยล็อกอิน = ตามโหมดสว่าง-มืดของเครื่อง
+    if (FirebaseAuth.instance.currentUser != null) return screen;
+    final dark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    return Theme(
+      data: dark ? AppTheme.dark() : AppTheme.light(),
+      child: screen,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: AppMotion.reduced(context) ? Duration.zero : AppMotion.page,
+    switchInCurve: AppMotion.pageEnter,
+    child: _launched ? const AuthGate() : _launchScreen(context),
+  );
+}
+
 /// เลือกหน้าแรกตามสถานะล็อกอิน
 ///
 /// StreamBuilder ฟัง authStateChanges() ตลอดเวลา:
-/// - ล็อกอินสำเร็จ → stream ส่ง User มา → แสดง HomeScreen
+/// - ล็อกอินสำเร็จ → stream ส่ง User มา → แสดง AppShell (แท็บคลัง/ทบทวน/สถิติ)
 /// - Logout → stream ส่ง null → แสดง AuthScreen อัตโนมัติ
 /// - เปิดแอปใหม่ Firebase จำการล็อกอินไว้ จึงเข้า Home ได้เลย
 class AuthGate extends StatefulWidget {
@@ -106,7 +141,7 @@ class _AuthGateState extends State<AuthGate> {
           );
         }
         final user = snapshot.data;
-        return user == null ? const AuthScreen() : HomeScreen(user: user);
+        return user == null ? const AuthScreen() : AppShell(user: user);
       },
     );
   }

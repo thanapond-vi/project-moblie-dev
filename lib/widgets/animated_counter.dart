@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../core/radius.dart';
 import '../core/motion.dart';
 import '../core/spacing.dart';
 
@@ -245,16 +246,19 @@ class EarnedBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final badge = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xxs + 2,
+      ),
       decoration: BoxDecoration(
         color: scheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.pillAll,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.bolt, size: 18, color: scheme.onTertiaryContainer),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xxs),
           Text(
             label,
             style: Theme.of(

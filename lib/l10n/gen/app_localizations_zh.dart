@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get tagline => '阅读 · 回忆 · 总结 —— 用 Active Recall 练习抓重点';
+  String get tagline => '阅读 · 回忆 · 反思';
 
   @override
   String get cancel => '取消';
@@ -680,4 +680,232 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupStart => '开始使用';
+
+  @override
+  String get navLibrary => '书库';
+
+  @override
+  String get navReview => '复习';
+
+  @override
+  String get navStats => '统计';
+
+  @override
+  String get reviewComingSoonBody => '间隔复习会把你快要忘记的文章重新带回来。';
+
+  @override
+  String get statsComingSoonBody => '你的阅读时间和回忆得分图表将显示在这里。';
+
+  @override
+  String streakDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '连续 $count 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get streakStart => '开始连续阅读';
+
+  @override
+  String todayGoal(int done, int goal) {
+    return '今天 $done / $goal 分钟';
+  }
+
+  @override
+  String get todayGoalMet => '今日目标已完成';
+
+  @override
+  String randomArticleSubtitle(String language) {
+    return 'Wikipedia · $language · 可选主题';
+  }
+
+  @override
+  String get historyTitle => '阅读记录';
+
+  @override
+  String get scoreMastered => '掌握牢固';
+
+  @override
+  String get scoreGood => '记得不错';
+
+  @override
+  String get scoreReview => '需要复习';
+
+  @override
+  String scoreSemantics(int score, String level) {
+    return '得分 $score，$level';
+  }
+
+  @override
+  String get tipTitle => '记忆小贴士';
+
+  @override
+  String get recallTip1 => '合上文章，先写下你记得的内容再核对。努力回想正是让记忆牢固的关键。';
+
+  @override
+  String get recallTip2 => '像讲给朋友听一样解释。简单的话最能体现你是否真正理解。';
+
+  @override
+  String get recallTip3 => '每天短读胜过一次长读。连续阅读让记忆保持温热。';
+
+  @override
+  String get recallTip4 => '漏掉了要点？明天只重读那一部分，然后再回想一次。';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String get topicSheetHint => '计时结束后，你将凭记忆写下内容，不能回看文章。';
+
+  @override
+  String get recallNoteTitle => '主动回忆提示';
+
+  @override
+  String get recallNoteLoading => '正在想一个阅读时记在心里的问题…';
+
+  @override
+  String get recallNoteFallback => '边读边问自己：主要观点是什么？为什么重要？';
+
+  @override
+  String get recallNoteHint => '写总结时凭记忆回答它。';
+
+  @override
+  String get bookmarkAdd => '收藏文章';
+
+  @override
+  String get bookmarkRemove => '取消收藏';
+
+  @override
+  String get bookmarkSaved => '已收藏文章';
+
+  @override
+  String get bookmarkRemoved => '已取消收藏';
+
+  @override
+  String readMinutesEstimate(int minutes) {
+    return '约 $minutes 分钟';
+  }
+
+  @override
+  String readingProgress(int percent) {
+    return '已读 $percent%';
+  }
+
+  @override
+  String get keyPointsTitle => '要点';
+
+  @override
+  String keyPointsCovered(int count) {
+    return '已涵盖（$count）';
+  }
+
+  @override
+  String keyPointsMissed(int count) {
+    return '遗漏（$count）';
+  }
+
+  @override
+  String keyPointsSummary(int covered, int total) {
+    return '涵盖 $covered/$total 个要点';
+  }
+
+  @override
+  String get keyPointCore => '核心';
+
+  @override
+  String get accuracyTitle => '请核对这些内容';
+
+  @override
+  String get readAnother => '再读一篇';
+
+  @override
+  String get statusActive => '活跃读者';
+
+  @override
+  String get statusReader => '读者';
+
+  @override
+  String memberSince(String month) {
+    return '$month 加入';
+  }
+
+  @override
+  String get statLogsSaved => '已保存';
+
+  @override
+  String get statReviewSuccess => '复习成功率';
+
+  @override
+  String get statStreak => '连续天数';
+
+  @override
+  String get launchSound => '启动音效';
+
+  @override
+  String get launchSoundHint => '打开 KEEP 时台灯轻轻闪烁的声音。手机静音时不会响。';
+
+  @override
+  String versionLabel(String version) {
+    return '版本 $version';
+  }
+
+  @override
+  String get authStatusPill => '主动回忆阅读';
+
+  @override
+  String get authFooter => '你的阅读记录仅你本人账号可见。';
+
+  @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetTitle => '重置密码';
+
+  @override
+  String get resetBody => '我们会发送一封邮件，帮你设置新密码。';
+
+  @override
+  String get resetSend => '发送链接';
+
+  @override
+  String resetSent(String email) {
+    return '如果 $email 有账号，重置链接已发送。';
+  }
+
+  @override
+  String stepOf(int current, int total) {
+    return '第 $current 步，共 $total 步';
+  }
+
+  @override
+  String get next => '下一步';
+
+  @override
+  String get back => '上一步';
+
+  @override
+  String get setupStep1Title => '谁在阅读？';
+
+  @override
+  String get setupStep2Title => '你喜欢怎样阅读？';
+
+  @override
+  String get selectedLabel => '已选择';
+
+  @override
+  String ttsSpeed(String rate) {
+    return '朗读速度 $rate×，点按切换';
+  }
+
+  @override
+  String get timeAlmostUp => '时间快到了';
+
+  @override
+  String get skipIntro => '跳过开场';
+
+  @override
+  String get noData => '暂无数据';
 }

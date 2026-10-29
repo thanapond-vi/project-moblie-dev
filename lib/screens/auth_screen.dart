@@ -5,7 +5,9 @@ import '../core/validators.dart';
 import '../l10n/l10n.dart';
 import '../services/auth_service.dart';
 import '../widgets/ui_helpers.dart';
+import '../core/spacing.dart';
 import '../core/theme.dart';
+import '../widgets/keep_logo.dart';
 
 /// หน้าจอ 1: Login / Register (ใช้หน้าเดียว สลับโหมดด้วยปุ่มด้านล่าง)
 class AuthScreen extends StatefulWidget {
@@ -26,6 +28,9 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isRegister = false;
   bool _isLoading = false;
   bool _obscure = true;
+
+  /// กำลังส่งอีเมลตั้งรหัสใหม่ (กันกดซ้ำจนโดน too-many-requests)
+  bool _sendingReset = false;
 
   @override
   void dispose() {
@@ -67,127 +72,361 @@ class _AuthScreenState extends State<AuthScreen> {
     _formKey.currentState?.reset();
   }
 
+  /// ลืมรหัสผ่าน: กรอก/ยืนยันอีเมล → Firebase ส่งลิงก์ตั้งรหัสใหม่ไปที่อีเมลนั้น
+  Future<void> _forgotPassword() async {
+    final email = await showDialog<String>(
+      context: context,
+      builder: (_) => _ResetPasswordDialog(initial: _emailController.text),
+    );
+    if (email == null || !mounted || _sendingReset) return;
+    setState(() => _sendingReset = true);
+    try {
+      await _auth.sendPasswordReset(email);
+      if (mounted) showMessage(context, context.l10n.resetSent(email.trim()));
+    } on AppException catch (e) {
+      if (mounted) showMessage(context, e.message, isError: true);
+    } finally {
+      if (mounted) setState(() => _sendingReset = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Icon(
-                      Icons.auto_stories_outlined,
-                      size: 56,
-                      color: theme.colorScheme.primary,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Center(child: _Emblem()),
+                  const SizedBox(height: AppSpacing.lg),
+                  // letterSpacing เว้นท้ายตัวสุดท้ายด้วย → ดันด้านหน้าเท่ากัน ให้คำอยู่กลางจริง
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(
+                      start: AppTheme.wordmarkLarge(context).letterSpacing ?? 0,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
+                    child: Text(
                       'KEEP',
                       textAlign: TextAlign.center,
                       style: AppTheme.wordmarkLarge(context),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.tagline,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    l10n.tagline,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
                     ),
-                    const SizedBox(height: 32),
-                    Text(
-                      _isRegister ? l10n.register : l10n.login,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: l10n.email,
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
-                      validator: Validators.email,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscure,
-                      textInputAction: _isRegister
-                          ? TextInputAction.next
-                          : TextInputAction.done,
-                      onFieldSubmitted: (_) => _isRegister ? null : _submit(),
-                      decoration: InputDecoration(
-                        labelText: l10n.password,
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          tooltip: _obscure
-                              ? l10n.showPassword
-                              : l10n.hidePassword,
-                          icon: Icon(
-                            _obscure
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Center(child: _StatusPill(label: l10n.authStatusPill)),
+                  const SizedBox(height: AppSpacing.xl),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Form(
+                        key: _formKey,
+                        child: AutofillGroup(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                _isRegister ? l10n.register : l10n.login,
+                                style: theme.textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              TextFormField(
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                autofillHints: const [AutofillHints.email],
+                                textInputAction: TextInputAction.next,
+                                decoration: InputDecoration(
+                                  labelText: l10n.email,
+                                  prefixIcon: const Icon(Icons.email_outlined),
+                                ),
+                                validator: Validators.email,
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscure,
+                                autofillHints: [
+                                  _isRegister
+                                      ? AutofillHints.newPassword
+                                      : AutofillHints.password,
+                                ],
+                                textInputAction: _isRegister
+                                    ? TextInputAction.next
+                                    : TextInputAction.done,
+                                onFieldSubmitted: (_) =>
+                                    _isRegister ? null : _submit(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.password,
+                                  prefixIcon: const Icon(Icons.lock_outline),
+                                  suffixIcon: IconButton(
+                                    tooltip: _obscure
+                                        ? l10n.showPassword
+                                        : l10n.hidePassword,
+                                    icon: Icon(
+                                      _obscure
+                                          ? Icons.visibility_outlined
+                                          : Icons.visibility_off_outlined,
+                                    ),
+                                    onPressed: () =>
+                                        setState(() => _obscure = !_obscure),
+                                  ),
+                                ),
+                                validator: Validators.password,
+                              ),
+                              if (_isRegister) ...[
+                                const SizedBox(height: AppSpacing.sm),
+                                TextFormField(
+                                  controller: _confirmController,
+                                  obscureText: _obscure,
+                                  autofillHints: const [
+                                    AutofillHints.newPassword,
+                                  ],
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _submit(),
+                                  decoration: InputDecoration(
+                                    labelText: l10n.confirmPassword,
+                                    prefixIcon: const Icon(
+                                      Icons.lock_reset_outlined,
+                                    ),
+                                  ),
+                                  validator: (v) => Validators.confirmPassword(
+                                    v,
+                                    _passwordController.text,
+                                  ),
+                                ),
+                              ] else
+                                Align(
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  child: TextButton(
+                                    onPressed: _isLoading || _sendingReset
+                                        ? null
+                                        : _forgotPassword,
+                                    child: Text(l10n.forgotPassword),
+                                  ),
+                                ),
+                              const SizedBox(height: AppSpacing.md),
+                              FilledButton(
+                                onPressed: _isLoading ? null : _submit,
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                        ),
+                                      )
+                                    : Text(
+                                        _isRegister
+                                            ? l10n.register
+                                            : l10n.login,
+                                      ),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              TextButton(
+                                onPressed: _isLoading ? null : _toggleMode,
+                                child: Text(
+                                  _isRegister
+                                      ? l10n.haveAccount
+                                      : l10n.noAccount,
+                                ),
+                              ),
+                            ],
                           ),
-                          onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                       ),
-                      validator: Validators.password,
                     ),
-                    if (_isRegister) ...[
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _confirmController,
-                        obscureText: _obscure,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) => _submit(),
-                        decoration: InputDecoration(
-                          labelText: l10n.confirmPassword,
-                          prefixIcon: Icon(Icons.lock_reset_outlined),
-                        ),
-                        validator: (v) => Validators.confirmPassword(
-                          v,
-                          _passwordController.text,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: AppSpacing.xxs),
+                      Flexible(
+                        child: Text(
+                          l10n.authFooter,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
-                    const SizedBox(height: 24),
-                    FilledButton(
-                      onPressed: _isLoading ? null : _submit,
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : Text(_isRegister ? l10n.register : l10n.login),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: _isLoading ? null : _toggleMode,
-                      child: Text(
-                        _isRegister ? l10n.haveAccount : l10n.noAccount,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// โลโก้ในวงกลมบนพื้นผิวขั้นถัดไป มีแสงอำพันจางๆ รอบวง (แสงจากโคมไฟ)
+class _Emblem extends StatelessWidget {
+  const _Emblem();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final lamp = ReadingLampColors.of(context);
+    return Container(
+      width: 112,
+      height: 112,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            lamp.glowHalo.withValues(alpha: 0.16 * lamp.glowStrength),
+            lamp.glowHalo.withValues(alpha: 0),
+          ],
+        ),
+      ),
+      child: Container(
+        width: 80,
+        height: 80,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: scheme.surfaceContainerLow,
+          border: Border.all(color: scheme.outlineVariant),
+        ),
+        child: const KeepLogo(size: 52, semanticLabel: 'KEEP'),
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xxs,
+      ),
+      decoration: ShapeDecoration(
+        color: scheme.surfaceContainer,
+        shape: StadiumBorder(side: BorderSide(color: scheme.outlineVariant)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: scheme.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Flexible(
+            child: Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// กล่องลืมรหัสผ่าน: ตรวจรูปแบบอีเมลก่อน แล้วคืนอีเมลให้หน้าหลักส่งลิงก์
+class _ResetPasswordDialog extends StatefulWidget {
+  const _ResetPasswordDialog({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_ResetPasswordDialog> createState() => _ResetPasswordDialogState();
+}
+
+class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final _controller = TextEditingController(text: widget.initial.trim());
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _send() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.pop(context, _controller.text.trim());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.resetTitle),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.resetBody),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _controller,
+              autofocus: true,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
+              textInputAction: TextInputAction.send,
+              onFieldSubmitted: (_) => _send(),
+              decoration: InputDecoration(
+                labelText: l10n.email,
+                prefixIcon: const Icon(Icons.email_outlined),
+              ),
+              validator: Validators.email,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
+          onPressed: _send,
+          child: Text(l10n.resetSend),
+        ),
+      ],
     );
   }
 }

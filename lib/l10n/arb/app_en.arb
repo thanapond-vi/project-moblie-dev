@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "tagline": "Read · Recall · Summarize — practice with Active Recall",
+  "tagline": "Read · Recall · Reflect",
   "cancel": "Cancel",
   "retry": "Try again",
   "save": "Save",
@@ -413,7 +413,7 @@
   "sourceWikipediaDesc": "Free encyclopedia in English, Chinese and Thai",
   "sourcesMore": "More sources",
   "sourcesMoreHint": "Coming in future updates — new sources or plugins",
-  "comingSoon": "Soon",
+  "comingSoon": "Coming soon",
   "applyLanguage": "Apply language",
   "restartTitle": "Restart the app?",
   "restartMessage": "The new language takes effect after the app restarts. Restart now?",
@@ -431,5 +431,180 @@
   "setupTitle": "Let's set things up",
   "setupSubtitle": "A few basics before your first read. You can change these later in Settings.",
   "setupProfilePicture": "Profile picture",
-  "setupStart": "Start reading"
+  "setupStart": "Start reading",
+  "navLibrary": "Library",
+  "navReview": "Review",
+  "navStats": "Stats",
+  "reviewComingSoonBody": "Spaced review will bring back the articles you are about to forget.",
+  "statsComingSoonBody": "Charts of your reading time and recall scores will live here.",
+  "streakDays": "{count, plural, =1{1 day streak} other{{count} day streak}}",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakStart": "Start a streak",
+  "todayGoal": "Today {done} / {goal} min",
+  "@todayGoal": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "todayGoalMet": "Today's goal done",
+  "randomArticleSubtitle": "Wikipedia · {language} · pick a topic",
+  "@randomArticleSubtitle": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "historyTitle": "Reading history",
+  "scoreMastered": "Mastered",
+  "scoreGood": "Solid",
+  "scoreReview": "Review again",
+  "scoreSemantics": "Score {score}, {level}",
+  "@scoreSemantics": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "tipTitle": "Recall tip",
+  "recallTip1": "Close the article and write what you remember before checking. The effort of recalling is what makes it stick.",
+  "recallTip2": "Explain it as if to a friend. Plain words show what you really understood.",
+  "recallTip3": "A short read every day beats one long session. A streak keeps the memory warm.",
+  "recallTip4": "Missed a key point? Reread just that part tomorrow, then recall it again.",
+  "close": "Close",
+  "topicSheetHint": "After the timer, you'll write what you remember without looking back.",
+  "recallNoteTitle": "Active recall note",
+  "recallNoteLoading": "Thinking of a question to keep in mind…",
+  "recallNoteFallback": "Keep asking yourself: what is the main idea, and why does it matter?",
+  "recallNoteHint": "Answer it from memory when you write your summary.",
+  "bookmarkAdd": "Save article",
+  "bookmarkRemove": "Remove from saved",
+  "bookmarkSaved": "Article saved",
+  "bookmarkRemoved": "Removed from saved",
+  "readMinutesEstimate": "~{minutes} min read",
+  "@readMinutesEstimate": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "readingProgress": "Read {percent}%",
+  "@readingProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "keyPointsTitle": "Key points",
+  "keyPointsCovered": "Covered ({count})",
+  "@keyPointsCovered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "keyPointsMissed": "Missed ({count})",
+  "@keyPointsMissed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "keyPointsSummary": "{covered} of {total} key points covered",
+  "@keyPointsSummary": {
+    "placeholders": {
+      "covered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "keyPointCore": "Core",
+  "accuracyTitle": "Check these facts",
+  "readAnother": "Read another article",
+  "statusActive": "Active reader",
+  "statusReader": "Reader",
+  "memberSince": "Member since {month}",
+  "@memberSince": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "statLogsSaved": "Logs saved",
+  "statReviewSuccess": "Review success",
+  "statStreak": "Day streak",
+  "launchSound": "Launch sound",
+  "launchSoundHint": "A soft lamp flicker when KEEP opens. Stays quiet when your phone is on silent.",
+  "versionLabel": "Version {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "authStatusPill": "Active recall reading",
+  "authFooter": "Your reading history is visible only to your account.",
+  "forgotPassword": "Forgot password?",
+  "resetTitle": "Reset password",
+  "resetBody": "We'll email you a link to set a new password.",
+  "resetSend": "Send link",
+  "resetSent": "If an account exists for {email}, a reset link is on its way.",
+  "@resetSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "stepOf": "Step {current} of {total}",
+  "@stepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "next": "Next",
+  "back": "Back",
+  "setupStep1Title": "Who's reading?",
+  "setupStep2Title": "How do you like to read?",
+  "selectedLabel": "Selected",
+  "ttsSpeed": "Reading speed {rate}×, tap to change",
+  "@ttsSpeed": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "timeAlmostUp": "Almost time",
+  "skipIntro": "Skip intro",
+  "noData": "no data yet"
 }

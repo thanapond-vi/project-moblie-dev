@@ -1,3 +1,5 @@
+import 'key_point.dart';
+
 /// ผลการประเมินจาก AI
 class AiEvaluation {
   const AiEvaluation({
@@ -5,6 +7,8 @@ class AiEvaluation {
     required this.feedback,
     required this.model,
     required this.tags,
+    this.keyPoints = const [],
+    this.accuracyIssues = const [],
   });
 
   /// คะแนนความเข้าใจ 0–100
@@ -16,4 +20,10 @@ class AiEvaluation {
 
   /// แท็กที่ AI แนะนำ (id หมวดยอดฮิต ไม่เกิน 3) ผู้ใช้แก้ต่อได้ก่อนบันทึก
   final List<String> tags;
+
+  /// ประเด็นสำคัญของบทความ พร้อมผลว่าคำสรุปครอบคลุมหรือยัง (ว่าง = โมเดลไม่ได้ส่งมา)
+  final List<KeyPoint> keyPoints;
+
+  /// สิ่งที่คำสรุปเขียนขัดกับบทความ
+  final List<String> accuracyIssues;
 }

@@ -184,7 +184,10 @@ class WikipediaSource implements ArticleSource {
       _api(language, {
         'action': 'query',
         'pageids': '${picked.pageId}',
-        'prop': 'extracts|info',
+        'prop': 'extracts|info|pageimages',
+        // รูปนำของบทความ (ถ้ามี) กว้าง 800 px พอสำหรับเต็มจอมือถือ
+        'piprop': 'thumbnail',
+        'pithumbsize': '800',
         'inprop': 'url${language.wikiVariant != null ? '|varianttitles' : ''}',
         'explaintext': '1', // ขอเป็นข้อความล้วน ไม่เอา HTML
         // หัวข้อมาเป็น "== ชื่อ ==" จะได้รู้แน่ว่าบรรทัดไหนคือหัวข้อ (cleanExtract แปลงกลับเป็นบรรทัดธรรมดา)
@@ -210,6 +213,7 @@ class WikipediaSource implements ArticleSource {
       language: language,
       topic: topic.tag,
       headings: cleaned.headings,
+      imageUrl: page?['thumbnail']?['source'] as String?,
     );
   }
 

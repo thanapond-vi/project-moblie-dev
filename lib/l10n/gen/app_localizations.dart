@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @tagline.
   ///
   /// In en, this message translates to:
-  /// **'Read · Recall · Summarize — practice with Active Recall'**
+  /// **'Read · Recall · Reflect'**
   String get tagline;
 
   /// No description provided for @cancel.
@@ -1219,7 +1219,7 @@ abstract class AppLocalizations {
   /// No description provided for @comingSoon.
   ///
   /// In en, this message translates to:
-  /// **'Soon'**
+  /// **'Coming soon'**
   String get comingSoon;
 
   /// No description provided for @applyLanguage.
@@ -1329,6 +1329,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start reading'**
   String get setupStart;
+
+  /// No description provided for @navLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get navLibrary;
+
+  /// No description provided for @navReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get navReview;
+
+  /// No description provided for @navStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get navStats;
+
+  /// No description provided for @reviewComingSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaced review will bring back the articles you are about to forget.'**
+  String get reviewComingSoonBody;
+
+  /// No description provided for @statsComingSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts of your reading time and recall scores will live here.'**
+  String get statsComingSoonBody;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day streak} other{{count} day streak}}'**
+  String streakDays(int count);
+
+  /// No description provided for @streakStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a streak'**
+  String get streakStart;
+
+  /// No description provided for @todayGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Today {done} / {goal} min'**
+  String todayGoal(int done, int goal);
+
+  /// No description provided for @todayGoalMet.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s goal done'**
+  String get todayGoalMet;
+
+  /// No description provided for @randomArticleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wikipedia · {language} · pick a topic'**
+  String randomArticleSubtitle(String language);
+
+  /// No description provided for @historyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading history'**
+  String get historyTitle;
+
+  /// No description provided for @scoreMastered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastered'**
+  String get scoreMastered;
+
+  /// No description provided for @scoreGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Solid'**
+  String get scoreGood;
+
+  /// No description provided for @scoreReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review again'**
+  String get scoreReview;
+
+  /// No description provided for @scoreSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score}, {level}'**
+  String scoreSemantics(int score, String level);
+
+  /// No description provided for @tipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall tip'**
+  String get tipTitle;
+
+  /// No description provided for @recallTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the article and write what you remember before checking. The effort of recalling is what makes it stick.'**
+  String get recallTip1;
+
+  /// No description provided for @recallTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain it as if to a friend. Plain words show what you really understood.'**
+  String get recallTip2;
+
+  /// No description provided for @recallTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'A short read every day beats one long session. A streak keeps the memory warm.'**
+  String get recallTip3;
+
+  /// No description provided for @recallTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed a key point? Reread just that part tomorrow, then recall it again.'**
+  String get recallTip4;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @topicSheetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After the timer, you\'ll write what you remember without looking back.'**
+  String get topicSheetHint;
+
+  /// No description provided for @recallNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active recall note'**
+  String get recallNoteTitle;
+
+  /// No description provided for @recallNoteLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking of a question to keep in mind…'**
+  String get recallNoteLoading;
+
+  /// No description provided for @recallNoteFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep asking yourself: what is the main idea, and why does it matter?'**
+  String get recallNoteFallback;
+
+  /// No description provided for @recallNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer it from memory when you write your summary.'**
+  String get recallNoteHint;
+
+  /// No description provided for @bookmarkAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Save article'**
+  String get bookmarkAdd;
+
+  /// No description provided for @bookmarkRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from saved'**
+  String get bookmarkRemove;
+
+  /// No description provided for @bookmarkSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Article saved'**
+  String get bookmarkSaved;
+
+  /// No description provided for @bookmarkRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from saved'**
+  String get bookmarkRemoved;
+
+  /// No description provided for @readMinutesEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'~{minutes} min read'**
+  String readMinutesEstimate(int minutes);
+
+  /// No description provided for @readingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Read {percent}%'**
+  String readingProgress(int percent);
+
+  /// No description provided for @keyPointsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key points'**
+  String get keyPointsTitle;
+
+  /// No description provided for @keyPointsCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered ({count})'**
+  String keyPointsCovered(int count);
+
+  /// No description provided for @keyPointsMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed ({count})'**
+  String keyPointsMissed(int count);
+
+  /// No description provided for @keyPointsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{covered} of {total} key points covered'**
+  String keyPointsSummary(int covered, int total);
+
+  /// No description provided for @keyPointCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Core'**
+  String get keyPointCore;
+
+  /// No description provided for @accuracyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check these facts'**
+  String get accuracyTitle;
+
+  /// No description provided for @readAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Read another article'**
+  String get readAnother;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active reader'**
+  String get statusActive;
+
+  /// No description provided for @statusReader.
+  ///
+  /// In en, this message translates to:
+  /// **'Reader'**
+  String get statusReader;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {month}'**
+  String memberSince(String month);
+
+  /// No description provided for @statLogsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs saved'**
+  String get statLogsSaved;
+
+  /// No description provided for @statReviewSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Review success'**
+  String get statReviewSuccess;
+
+  /// No description provided for @statStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Day streak'**
+  String get statStreak;
+
+  /// No description provided for @launchSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch sound'**
+  String get launchSound;
+
+  /// No description provided for @launchSoundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A soft lamp flicker when KEEP opens. Stays quiet when your phone is on silent.'**
+  String get launchSoundHint;
+
+  /// No description provided for @versionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String versionLabel(String version);
+
+  /// No description provided for @authStatusPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Active recall reading'**
+  String get authStatusPill;
+
+  /// No description provided for @authFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reading history is visible only to your account.'**
+  String get authFooter;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetTitle;
+
+  /// No description provided for @resetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email you a link to set a new password.'**
+  String get resetBody;
+
+  /// No description provided for @resetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send link'**
+  String get resetSend;
+
+  /// No description provided for @resetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for {email}, a reset link is on its way.'**
+  String resetSent(String email);
+
+  /// No description provided for @stepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepOf(int current, int total);
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @setupStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s reading?'**
+  String get setupStep1Title;
+
+  /// No description provided for @setupStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you like to read?'**
+  String get setupStep2Title;
+
+  /// No description provided for @selectedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get selectedLabel;
+
+  /// No description provided for @ttsSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading speed {rate}×, tap to change'**
+  String ttsSpeed(String rate);
+
+  /// No description provided for @timeAlmostUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost time'**
+  String get timeAlmostUp;
+
+  /// No description provided for @skipIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip intro'**
+  String get skipIntro;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'no data yet'**
+  String get noData;
 }
 
 class _AppLocalizationsDelegate

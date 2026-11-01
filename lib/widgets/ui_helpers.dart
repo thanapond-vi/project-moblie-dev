@@ -36,6 +36,7 @@ Future<bool> confirmDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
+          // context.l10n มาจาก lib/l10n/l10n.dart
           child: Text(cancelLabel ?? context.l10n.cancel),
         ),
         FilledButton(
@@ -65,6 +66,7 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
+        // AppSpacing มาจาก lib/core/spacing.dart
         padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

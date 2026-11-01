@@ -21,6 +21,7 @@ class AiEvaluation {
   /// แท็กที่ AI แนะนำ (id หมวดยอดฮิต ไม่เกิน 3) ผู้ใช้แก้ต่อได้ก่อนบันทึก
   final List<String> tags;
 
+  // KeyPoint มาจาก lib/models/key_point.dart
   /// ประเด็นสำคัญของบทความ พร้อมผลว่าคำสรุปครอบคลุมหรือยัง (ว่าง = โมเดลไม่ได้ส่งมา)
   final List<KeyPoint> keyPoints;
 

@@ -36,6 +36,7 @@ class CapsuleNavBar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return SafeArea(
       top: false,
+      // AppSpacing มาจาก lib/core/spacing.dart
       minimum: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -97,6 +98,7 @@ class _CapsuleNavButton extends StatelessWidget {
         onTap: onTap,
         customBorder: const StadiumBorder(),
         child: AnimatedContainer(
+          // AppMotion มาจาก lib/core/motion.dart
           duration: AppMotion.reduced(context)
               ? Duration.zero
               : AppMotion.select,
@@ -107,6 +109,7 @@ class _CapsuleNavButton extends StatelessWidget {
             color: selected
                 ? scheme.secondaryContainer
                 : scheme.surfaceContainerHigh,
+            // AppRadius มาจาก lib/core/radius.dart
             borderRadius: AppRadius.pillAll,
           ),
           child: Column(

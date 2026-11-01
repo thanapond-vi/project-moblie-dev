@@ -12,13 +12,17 @@ export 'gen/app_localizations.dart';
 /// - ใน service / validator (ไม่มี BuildContext): ใช้ `tr.xxx`
 ///   ซึ่งดึงภาษาจากค่า "ภาษาของแอป" ใน SettingsService
 extension AppLocalizationsX on BuildContext {
+  // AppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
   AppLocalizations get l10n => AppLocalizations.of(this);
 }
 
 /// ข้อความตามภาษาของแอปปัจจุบัน สำหรับโค้ดที่ไม่มี BuildContext
 AppLocalizations get tr =>
+    // lookupAppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
+    // SettingsService มาจาก lib/services/settings_service.dart
     lookupAppLocalizations(SettingsService.instance.appLanguage.value.locale);
 
+// ArticleTag มาจาก lib/models/article_tag.dart
 /// ชื่อหมวดตามภาษาของแอป
 extension ArticleTagLabel on ArticleTag {
   String label(AppLocalizations l10n) => switch (this) {

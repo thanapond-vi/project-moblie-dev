@@ -8,6 +8,7 @@ class ReadingTopic {
   const ReadingTopic._({this.preset, this.query});
 
   static const any = ReadingTopic._();
+  // ArticleTag มาจาก lib/models/article_tag.dart
   const ReadingTopic.preset(ArticleTag tag) : this._(preset: tag);
   const ReadingTopic.search(String text) : this._(query: text);
 

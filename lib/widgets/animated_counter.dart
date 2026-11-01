@@ -98,6 +98,7 @@ class _StatRevealCardState extends State<StatRevealCard>
     if (_started) return;
     _started = true;
     // เปิด Reduce Motion ในเครื่อง → แสดงสถานะสุดท้ายทันที ไม่มี animation
+    // AppMotion มาจาก lib/core/motion.dart
     if (AppMotion.reduced(context)) {
       _controller.value = 1;
       return;
@@ -156,6 +157,7 @@ class _StatRevealCardState extends State<StatRevealCard>
                   : null,
               child: Padding(
                 padding: EdgeInsets.all(
+                  // AppSpacing มาจาก lib/core/spacing.dart
                   prominent ? AppSpacing.md : AppSpacing.sm,
                 ),
                 child: Column(
@@ -252,6 +254,7 @@ class EarnedBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: scheme.tertiaryContainer,
+        // AppRadius มาจาก lib/core/radius.dart
         borderRadius: AppRadius.pillAll,
       ),
       child: Row(

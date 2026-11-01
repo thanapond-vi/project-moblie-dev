@@ -21,6 +21,7 @@ abstract class TtsService {
   /// ย่อหน้าที่กำลังอ่าน (ใช้ไฮไลต์และเลื่อนจอตาม)
   ValueListenable<int> get currentParagraph;
 
+  // ContentLanguage มาจาก lib/models/content_language.dart
   /// ตั้งภาษาเสียง ถ้าเครื่องไม่มีเสียงภาษานั้นจะ throw AppException
   Future<void> setLanguage(ContentLanguage language);
 
@@ -78,6 +79,8 @@ class DeviceTtsService implements TtsService {
   Future<void> setLanguage(ContentLanguage language) async {
     final available = await _tts.isLanguageAvailable(language.ttsLocale);
     if (available != true) {
+      // context.l10n มาจาก lib/l10n/l10n.dart
+      // AppException มาจาก lib/core/app_exception.dart
       throw AppException(tr.errTtsNoVoice(language.label));
     }
     await _tts.setLanguage(language.ttsLocale);

@@ -13,6 +13,8 @@ class StatTile extends StatelessWidget {
     required this.label,
     required this.color,
     this.unit,
+    this.caption,
+    this.captionSemantics,
   });
 
   /// null = ยังไม่มีข้อมูล แสดงขีด
@@ -20,6 +22,12 @@ class StatTile extends StatelessWidget {
   final String label;
   final Color color;
   final String? unit;
+
+  /// บรรทัดเล็กใต้ป้าย เช่น "↑ 12 จากช่วงก่อน"
+  final String? caption;
+
+  /// ข้อความเต็มของ [caption] สำหรับโปรแกรมอ่านหน้าจอ (เช่น "↑ 5" → "เพิ่ม 5 จากช่วงก่อน")
+  final String? captionSemantics;
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +42,22 @@ class StatTile extends StatelessWidget {
     final spoken = v == null
         ? '$label: ${context.l10n.noData}'
         : '$label: $v${unit == null ? '' : ' $unit'}';
+    final spokenCaption = captionSemantics ?? caption;
+    final fullSpoken = spokenCaption == null
+        ? spoken
+        : '$spoken. $spokenCaption';
     return Semantics(
-      label: spoken,
+      label: fullSpoken,
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(
+          // AppSpacing มาจาก lib/core/spacing.dart
           horizontal: AppSpacing.xs,
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
           color: scheme.surfaceContainer,
+          // AppRadius มาจาก lib/core/radius.dart
           borderRadius: AppRadius.controlAll,
         ),
         child: Column(
@@ -59,6 +73,7 @@ class StatTile extends StatelessWidget {
                 children: [
                   v == null
                       ? Text('–', style: number)
+                      // AnimatedCounter มาจาก lib/widgets/animated_counter.dart
                       : AnimatedCounter(value: v, style: number),
                   if (unit != null && v != null) ...[
                     const SizedBox(width: 2),
@@ -80,6 +95,16 @@ class StatTile extends StatelessWidget {
                 color: scheme.onSurfaceVariant,
               ),
             ),
+            if (caption != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                caption!,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurface,
+                ),
+              ),
+            ],
           ],
         ),
       ),

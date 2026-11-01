@@ -39,6 +39,7 @@ class KeepLogo extends StatelessWidget {
     final logo = CustomPaint(
       size: Size.square(size),
       painter: KeepLogoPainter(
+        // KeepLogoColors มาจาก lib/core/theme.dart
         colors: KeepLogoColors.of(context),
         lamp: lamp,
         beam: beam,

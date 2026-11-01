@@ -117,6 +117,7 @@ class _ReadingLampBackgroundState extends State<ReadingLampBackground>
 
   @override
   Widget build(BuildContext context) {
+    // ReadingLampColors มาจาก lib/core/theme.dart
     final colors = ReadingLampColors.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {

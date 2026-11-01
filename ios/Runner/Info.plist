@@ -70,5 +70,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- เข้าสู่ระบบด้วย Google ผ่าน Firebase (signInWithProvider): หลังหน้า Google เสร็จ ระบบกลับเข้าแอปด้วย scheme นี้
+	     ค่า = Encoded App ID ของแอป iOS ใน Firebase (GOOGLE_APP_ID แทน : ด้วย -) -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-251494948991-ios-cb6eee43d92d2d2d705f4a</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

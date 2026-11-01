@@ -30,13 +30,17 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
+  // SettingsService มาจาก lib/services/settings_service.dart
   final _settings = SettingsService.instance;
   late final _nickname = TextEditingController(
+    // ProfileService มาจาก lib/services/profile_service.dart
     text: ProfileService.instance.defaultNickname(widget.user),
   );
 
+  // AvatarPreset มาจาก lib/models/user_profile.dart
   AvatarPreset _preset = AvatarPreset.cat;
   Uint8List? _photo;
+  // ContentLanguage มาจาก lib/models/content_language.dart
   late ContentLanguage _appLanguage = _settings.appLanguage.value;
   late ContentLanguage _articleLanguage = _settings.articleLanguage.value;
   late int _minutes = _settings.timerMinutes.value;
@@ -79,15 +83,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         applyNow: true,
       );
       if (mounted) Navigator.pop(context);
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       if (mounted) {
         setState(() => _saving = false);
+        // showMessage มาจาก lib/widgets/ui_helpers.dart
         showMessage(context, e.message, isError: true);
       }
     } catch (_) {
       // error อื่นๆ ต้องปลดล็อกปุ่มด้วย ไม่งั้นติดอยู่หน้านี้ (หน้านี้ปิดเองไม่ได้)
       if (mounted) {
         setState(() => _saving = false);
+        // context.l10n มาจาก lib/l10n/l10n.dart
         showMessage(context, context.l10n.errGeneric, isError: true);
       }
     }
@@ -123,6 +130,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
+                // AppSpacing มาจาก lib/core/spacing.dart
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: _StepBar(step: _step, total: _steps),
               ),
@@ -133,6 +141,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   key: _formKey,
                   // เปลี่ยนขั้นแบบ fade + เลื่อนสั้นๆ (ปิดเมื่อเปิด Reduce Motion)
                   child: AnimatedSwitcher(
+                    // AppMotion มาจาก lib/core/motion.dart
                     duration: AppMotion.reduced(context)
                         ? Duration.zero
                         : AppMotion.page,
@@ -187,6 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       const SizedBox(height: AppSpacing.xl),
       Center(
+        // UserAvatar มาจาก lib/widgets/avatar_widgets.dart
         child: UserAvatar(preset: _preset, photo: _photo, radius: 48),
       ),
       const SizedBox(height: AppSpacing.xl),
@@ -199,11 +209,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           labelText: l10n.nickname,
           prefixIcon: const Icon(Icons.badge_outlined),
         ),
+        // Validators มาจาก lib/core/validators.dart
         validator: (v) => Validators.nickname(v, l10n),
       ),
       const SizedBox(height: AppSpacing.xl),
       Text(l10n.setupProfilePicture, style: theme.textTheme.titleMedium),
       const SizedBox(height: AppSpacing.sm),
+      // AvatarPicker มาจาก lib/widgets/avatar_widgets.dart
       AvatarPicker(
         selected: _preset,
         photo: _photo,

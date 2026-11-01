@@ -21,6 +21,7 @@ class StudyLogRepository {
 
   // ---------- Read (realtime) ----------
 
+  // StudyLog มาจาก lib/models/study_log.dart
   /// ดึงเฉพาะ log ของผู้ใช้คนนี้ แล้วเรียงใหม่สุดก่อน
   ///
   /// เรียงลำดับฝั่งแอปแทน `.orderBy('createdAt')` เพราะการใช้ where + orderBy
@@ -56,7 +57,9 @@ class StudyLogRepository {
     required int pageId,
     int? aiScore,
     String? aiFeedback,
+    // KeyPoint มาจาก lib/models/key_point.dart
     List<KeyPoint> keyPoints = const [],
+    String? recallQuestion,
   }) {
     return _run(
       () => _logs.doc(logId).set({
@@ -74,6 +77,8 @@ class StudyLogRepository {
         'aiFeedback': aiFeedback,
         // ประเด็นที่ AI ตรวจ (ครอบคลุม/ขาด) เปิดบันทึกเก่าก็ยังเห็นรายการเดิม
         'keyPoints': [for (final p in keyPoints) p.toMap()],
+        // คำถามชวนนึกจากตอนอ่าน ใช้ถามอีกครั้งตอนทบทวน
+        'recallQuestion': recallQuestion,
         // ใช้เวลาของเซิร์ฟเวอร์ ไม่ใช่เวลาเครื่อง เพื่อให้ทุกเครื่องเรียงตรงกัน
         'createdAt': FieldValue.serverTimestamp(),
       }),
@@ -103,6 +108,25 @@ class StudyLogRepository {
     );
   }
 
+  /// บันทึกผลทบทวน 1 ครั้ง: กล่องใหม่ + วันครบกำหนดครั้งถัดไป + นับครั้ง (บวกเพิ่มที่เซิร์ฟเวอร์)
+  Future<void> recordReview({
+    required String logId,
+    required int box,
+    required DateTime nextReviewAt,
+    required bool passed,
+  }) {
+    return _run(
+      () => _logs.doc(logId).update({
+        'reviewBox': box,
+        'nextReviewAt': Timestamp.fromDate(nextReviewAt),
+        'lastReviewedAt': FieldValue.serverTimestamp(),
+        // increment = บวกที่เซิร์ฟเวอร์ ไม่ทับกันถ้ามี 2 เครื่องทบทวนพร้อมกัน
+        'reviewsTotal': FieldValue.increment(1),
+        if (passed) 'reviewsPassed': FieldValue.increment(1),
+      }),
+    );
+  }
+
   // ---------- Delete ----------
 
   Future<void> delete(String logId) => _run(() => _logs.doc(logId).delete());
@@ -113,6 +137,8 @@ class StudyLogRepository {
       return await action().timeout(_timeout);
     } on FirebaseException catch (e) {
       if (e.code == 'permission-denied') {
+        // context.l10n มาจาก lib/l10n/l10n.dart
+        // AppException มาจาก lib/core/app_exception.dart
         throw AppException(tr.errPermissionDenied);
       }
       if (e.code == 'unavailable') {

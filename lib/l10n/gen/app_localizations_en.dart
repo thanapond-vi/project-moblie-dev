@@ -950,4 +950,283 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noData => 'no data yet';
+
+  @override
+  String get range7 => '7 days';
+
+  @override
+  String get range30 => '30 days';
+
+  @override
+  String get rangeAll => 'All time';
+
+  @override
+  String get statsMinutesTitle => 'Reading time';
+
+  @override
+  String get statsScoresTitle => 'Recall scores';
+
+  @override
+  String get statsCalendarTitle => 'Reading calendar';
+
+  @override
+  String get statsTopicsTitle => 'Topics you read';
+
+  @override
+  String get statsEmpty =>
+      'Nothing read in this period yet. Pick a random article from the Library tab.';
+
+  @override
+  String changeUp(String value) {
+    return '↑ $value from last period';
+  }
+
+  @override
+  String changeDown(String value) {
+    return '↓ $value from last period';
+  }
+
+  @override
+  String get changeSame => 'Same as last period';
+
+  @override
+  String get showTable => 'Show as table';
+
+  @override
+  String get showChart => 'Show as chart';
+
+  @override
+  String get chartTapHint => 'Tap the chart to see values';
+
+  @override
+  String get legendLess => 'Less';
+
+  @override
+  String get legendMore => 'More';
+
+  @override
+  String weekOf(String date) {
+    return 'Week of $date';
+  }
+
+  @override
+  String minutesSummary(int total, int max, String day) {
+    return '$total min in total. Most: $max min, $day.';
+  }
+
+  @override
+  String scoresSummary(int count, int latest, int average) {
+    return '$count scored articles. Latest $latest, average $average.';
+  }
+
+  @override
+  String calendarSummary(int days, int longest) {
+    return 'Read on $days days in the last 12 weeks. Longest streak $longest days.';
+  }
+
+  @override
+  String topicsSummary(String topic, int count) {
+    return 'Most read: $topic, $count articles.';
+  }
+
+  @override
+  String longestStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Longest streak: $count days',
+      one: 'Longest streak: 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String topicValue(int count, int score) {
+    return '$count · avg $score';
+  }
+
+  @override
+  String get otherTopics => 'Other';
+
+  @override
+  String get noScoresYet => 'No scores in this period yet';
+
+  @override
+  String reviewDueTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles to review',
+      one: '1 article to review',
+      zero: 'Nothing to review today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDueSub => 'Recall it first, then check the key points.';
+
+  @override
+  String reviewNextOn(String date) {
+    return 'Next review: $date';
+  }
+
+  @override
+  String get reviewBoxesTitle => 'Memory boxes';
+
+  @override
+  String get reviewBoxesHint =>
+      'Remember it and the article moves to a box with a longer gap. Forget it and it goes back to box 1.';
+
+  @override
+  String boxLabel(int box) {
+    return 'Box $box';
+  }
+
+  @override
+  String everyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'every $count days',
+      one: 'every day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dueToday => 'Due today';
+
+  @override
+  String overdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get comingUp => 'Coming up';
+
+  @override
+  String dueOn(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get startReview => 'Review';
+
+  @override
+  String get reviewEmptyAll =>
+      'Read an article and save your summary first. It comes up for review the next day.';
+
+  @override
+  String reviewAllDone(String date) {
+    return 'All caught up. Come back $date.';
+  }
+
+  @override
+  String get recallPromptGeneric =>
+      'What do you remember about this article? Start with the main idea.';
+
+  @override
+  String get recallJotHint =>
+      'Jot down what you remember (optional, not saved)';
+
+  @override
+  String get reveal => 'Reveal key points';
+
+  @override
+  String get reviewYourSummary => 'Your earlier summary';
+
+  @override
+  String get rateTitle => 'How well did you remember?';
+
+  @override
+  String get rateAgain => 'Forgot';
+
+  @override
+  String get rateHard => 'Hard';
+
+  @override
+  String get rateGood => 'Good';
+
+  @override
+  String get rateEasy => 'Easy';
+
+  @override
+  String nextInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in $count days',
+      one: 'in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Next review in $count days',
+      one: 'Next review tomorrow',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSuccessCaption(int passed, int total) {
+    return '$passed of $total reviews remembered';
+  }
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'This permanently deletes your reading history, summaries, review progress and profile. It can\'t be undone.';
+
+  @override
+  String get deleteAccountPassword => 'Enter your password to confirm';
+
+  @override
+  String get deleteAccountConfirm => 'Delete forever';
+
+  @override
+  String get accountDeleted => 'Your account has been deleted';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get orDivider => 'or';
+
+  @override
+  String get errGoogleSetup => 'Google sign-in isn\'t set up for this app yet.';
+
+  @override
+  String get errGoogleFailed =>
+      'Couldn\'t sign in with Google. Please try again.';
+
+  @override
+  String get errAccountOtherProvider =>
+      'This email already uses a different sign-in method. Log in with your password.';
+
+  @override
+  String get deleteAccountGoogle =>
+      'You\'ll be asked to sign in with Google again to confirm.';
+
+  @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get appleComingSoon => 'Sign in with Apple is coming soon';
 }

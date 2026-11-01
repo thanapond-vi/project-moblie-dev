@@ -9,8 +9,10 @@ import '../core/validators.dart';
 import '../l10n/l10n.dart';
 import '../models/content_language.dart';
 import '../models/reading_stats.dart';
+import '../models/review_schedule.dart';
 import '../models/study_log.dart';
 import '../models/user_profile.dart';
+import '../services/account_service.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
 import '../services/profile_service.dart';
@@ -36,16 +38,21 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  // SettingsService มาจาก lib/services/settings_service.dart
   final _settings = SettingsService.instance;
   bool _signingOut = false;
 
+  // StudyLog มาจาก lib/models/study_log.dart
+  // StudyLogRepository มาจาก lib/services/study_log_repository.dart
   /// ประวัติการอ่าน (ใช้นับสถิติในการ์ดโปรไฟล์) สร้าง stream ครั้งเดียว
   late final Stream<List<StudyLog>> _logs = StudyLogRepository().watchLogs(
     widget.user.uid,
   );
 
   Future<void> _logout() async {
+    // context.l10n มาจาก lib/l10n/l10n.dart
     final l10n = context.l10n;
+    // confirmDialog มาจาก lib/widgets/ui_helpers.dart
     final ok = await confirmDialog(
       context,
       title: l10n.logoutTitle,
@@ -56,20 +63,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() => _signingOut = true);
     try {
+      // AuthService มาจาก lib/services/auth_service.dart
       await AuthService().signOut();
       // ลืมข้อมูลของคนนี้ในหน่วยความจำ (เซสชันยังเก็บในเครื่อง ล็อกอินกลับมาก็อ่านต่อได้)
+      // SessionService มาจาก lib/services/session_service.dart
       SessionService.instance.detach();
+      // ProfileService มาจาก lib/services/profile_service.dart
       ProfileService.instance.detach();
+      // BookmarkService มาจาก lib/services/bookmark_service.dart
       BookmarkService.instance.clear();
       // ปิดทุกหน้าที่ซ้อนอยู่ให้เหลือหน้าแรก (AuthGate) ซึ่งจะแสดง AuthScreen เอง
       // ผู้ใช้จึงกดย้อนกลับไปหน้าที่ต้องล็อกอินไม่ได้
       if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       if (mounted) {
         setState(() => _signingOut = false);
+        // showMessage มาจาก lib/widgets/ui_helpers.dart
         showMessage(context, e.message, isError: true);
       }
     }
+  }
+
+  /// ลบบัญชี: กล่องยืนยัน (ใส่รหัสผ่าน) จะลบเองแล้วคืนค่า true เมื่อสำเร็จ
+  Future<void> _deleteAccount() async {
+    // จับ messenger ไว้ก่อน: หลังลบแล้วหน้านี้ถูกปิด context จะใช้ไม่ได้
+    final messenger = ScaffoldMessenger.of(context);
+    final message = context.l10n.accountDeleted;
+    final deleted = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const _DeleteAccountDialog(),
+    );
+    if (deleted != true || !mounted) return;
+    // บัญชีหายแล้ว → AuthGate เห็นว่าไม่มีผู้ใช้ แล้วแสดงหน้า login เอง
+    Navigator.popUntil(context, (route) => route.isFirst);
+    messenger.showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -81,11 +110,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.only(
+          // AppSpacing มาจาก lib/core/spacing.dart
           left: AppSpacing.md,
           top: AppSpacing.xs,
           right: AppSpacing.md,
           bottom: AppSpacing.xxl,
         ),
+        // staggered มาจาก lib/widgets/motion_widgets.dart
         children: staggered([
           StreamBuilder<List<StudyLog>>(
             stream: _logs,
@@ -93,7 +124,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               user: widget.user,
               // ยังโหลดไม่เสร็จ/โหลดไม่ได้ = ไม่มีสถิติ (การ์ดแสดงขีดแทนตัวเลข)
               stats: snapshot.hasData
+                  // ReadingStats มาจาก lib/models/reading_stats.dart
                   ? ReadingStats.from(snapshot.data!)
+                  : null,
+              reviewSuccess: snapshot.hasData
+                  // ReviewSchedule มาจาก lib/models/review_schedule.dart
+                  ? ReviewSchedule.successRate(snapshot.data!)
                   : null,
             ),
           ),
@@ -182,6 +218,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
             label: Text(l10n.logout),
           ),
+          const SizedBox(height: AppSpacing.xs),
+          // ลบบัญชี: ปุ่มรอง (ไม่เด่นเท่า logout) แต่เป็นสีแดงให้รู้ว่าอันตราย
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              foregroundColor: theme.colorScheme.error,
+            ),
+            onPressed: _signingOut ? null : _deleteAccount,
+            icon: const Icon(Icons.delete_forever_outlined),
+            label: Text(l10n.deleteAccount),
+          ),
           const SizedBox(height: AppSpacing.xxl),
           const _VersionFooter(),
         ]),
@@ -217,14 +264,21 @@ class _SectionTitle extends StatelessWidget {
 }
 
 /// การ์ดโปรไฟล์: รูป (แตะเพื่อเปลี่ยน) + ชื่อเล่น (แก้ได้) + สถานะ · เป็นสมาชิกตั้งแต่ + อีเมล
-/// และสถิติ 3 ช่อง: บันทึกแล้ว / ทบทวนสำเร็จ (รอระบบทบทวน Phase B) / วันติดกัน
+/// และสถิติ 3 ช่อง: บันทึกแล้ว / ทบทวนสำเร็จ % / วันติดกัน
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.user, required this.stats});
+  const _ProfileHeader({
+    required this.user,
+    required this.stats,
+    required this.reviewSuccess,
+  });
 
   final User user;
 
   /// null = ประวัติยังโหลดไม่เสร็จ
   final ReadingStats? stats;
+
+  /// อัตราทบทวนสำเร็จ % (null = ยังไม่เคยทบทวน)
+  final int? reviewSuccess;
 
   Future<void> _changeAvatar(BuildContext context) {
     return showModalBottomSheet<void>(
@@ -238,9 +292,12 @@ class _ProfileHeader extends StatelessWidget {
             bottom: AppSpacing.lg,
           ),
           // ฟังโปรไฟล์ในแผ่นด้วย: เลือกแล้วกรอบที่เลือกขยับตามทันที
+          // UserProfile มาจาก lib/models/user_profile.dart
           child: ValueListenableBuilder<UserProfile?>(
             valueListenable: ProfileService.instance.current,
+            // AvatarPicker มาจาก lib/widgets/avatar_widgets.dart
             builder: (context, profile, _) => AvatarPicker(
+              // AvatarPreset มาจาก lib/models/user_profile.dart
               selected: profile?.preset ?? AvatarPreset.cat,
               photo: profile?.avatarBytes,
               onPreset: (preset) => _save(
@@ -312,6 +369,7 @@ class _ProfileHeader extends StatelessWidget {
                         onTap: () => _changeAvatar(context),
                         child: Stack(
                           children: [
+                            // UserAvatar มาจาก lib/widgets/avatar_widgets.dart
                             UserAvatar.of(profile, radius: 36),
                             PositionedDirectional(
                               end: 0,
@@ -377,6 +435,7 @@ class _ProfileHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
+                      // StatTile มาจาก lib/widgets/stat_tile.dart
                       child: StatTile(
                         value: stats?.articles,
                         label: l10n.statLogsSaved,
@@ -384,10 +443,11 @@ class _ProfileHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    // ทบทวนสำเร็จ % มาจากระบบทบทวนแบบเว้นระยะ (Phase B) ตอนนี้แสดงขีดไว้ก่อน
+                    // ทบทวนสำเร็จ % = ครั้งที่ตอบ "ดี/ง่าย" ÷ ครั้งที่ทบทวนทั้งหมด (ยังไม่เคยทบทวน = ขีด)
                     Expanded(
                       child: StatTile(
-                        value: null,
+                        value: reviewSuccess,
+                        unit: '%',
                         label: l10n.statReviewSuccess,
                         color: scheme.secondary,
                       ),
@@ -407,6 +467,150 @@ class _ProfileHeader extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// กล่องยืนยันลบบัญชี: อธิบายว่าจะลบอะไร + ใส่รหัสผ่าน + ปุ่มลบสีแดง
+/// ลบสำเร็จ → ปิดกล่องพร้อมค่า true, รหัสผิด/เน็ตหลุด → แสดง error ในกล่อง ลองใหม่ได้
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _password = TextEditingController();
+
+  /// บัญชีที่ล็อกอินด้วย Google ไม่มีรหัสผ่าน → ยืนยันด้วยการเข้าสู่ระบบ Google อีกครั้ง
+  final bool _usesPassword = AuthService().usesPassword;
+  bool _deleting = false;
+  bool _obscure = true;
+  String? _error;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _confirm() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() {
+      _deleting = true;
+      _error = null;
+    });
+    try {
+      // AccountService มาจาก lib/services/account_service.dart
+      final deleted = await AccountService().deleteAccount(
+        password: _usesPassword ? _password.text : null,
+      );
+      if (!mounted) return;
+      // false = ยกเลิกหน้าต่าง Google (ยังไม่มีอะไรถูกลบ) → กลับมาให้กดใหม่ได้
+      if (deleted) {
+        Navigator.pop(context, true);
+      } else {
+        setState(() => _deleting = false);
+      }
+    } on AppException catch (e) {
+      if (mounted) {
+        setState(() {
+          _deleting = false;
+          _error = e.message;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final l10n = context.l10n;
+    return AlertDialog(
+      icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
+      title: Text(l10n.deleteAccountTitle),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.deleteAccountBody),
+              const SizedBox(height: AppSpacing.md),
+              if (!_usesPassword) ...[
+                Text(
+                  l10n.deleteAccountGoogle,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                if (_error != null) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    _error!,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.error,
+                    ),
+                  ),
+                ],
+              ] else
+                TextFormField(
+                  controller: _password,
+                  enabled: !_deleting,
+                  obscureText: _obscure,
+                  autofillHints: const [AutofillHints.password],
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _confirm(),
+                  decoration: InputDecoration(
+                    labelText: l10n.deleteAccountPassword,
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    errorText: _error,
+                    errorMaxLines: 3,
+                    suffixIcon: IconButton(
+                      tooltip: _obscure ? l10n.showPassword : l10n.hidePassword,
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () => setState(() => _obscure = !_obscure),
+                    ),
+                  ),
+                  // Validators มาจาก lib/core/validators.dart
+                  validator: Validators.password,
+                ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _deleting ? null : () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(0, 40),
+            backgroundColor: scheme.error,
+            foregroundColor: scheme.onError,
+          ),
+          onPressed: _deleting ? null : _confirm,
+          child: _deleting
+              ? SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: scheme.onError,
+                  ),
+                )
+              : Text(l10n.deleteAccountConfirm),
+        ),
+      ],
     );
   }
 }
@@ -506,10 +710,12 @@ class _LanguageSettings extends StatefulWidget {
 class _LanguageSettingsState extends State<_LanguageSettings> {
   final _settings = SettingsService.instance;
 
+  // ContentLanguage มาจาก lib/models/content_language.dart
   late ContentLanguage _app;
   late ContentLanguage _article;
   late ContentLanguage? _tts;
 
+  // PendingLanguages มาจาก lib/services/settings_service.dart
   /// ค่าที่จะมีผลหลังรีสตาร์ต: ถ้ามีค่าค้าง (เลือก "ไว้ทีหลัง") ใช้ค่านั้น ไม่งั้นใช้ค่าปัจจุบัน
   PendingLanguages get _effective =>
       _settings.pendingLanguages.value ??
@@ -553,6 +759,7 @@ class _LanguageSettingsState extends State<_LanguageSettings> {
     );
     if (!mounted) return;
     if (restart) {
+      // AppRestarter มาจาก lib/core/app_restarter.dart
       AppRestarter.restart(context); // สร้างแอปใหม่ทั้งหมดด้วยภาษาใหม่
     } else {
       showMessage(context, l10n.languageSavedForLater);
@@ -686,6 +893,7 @@ class _SourceSettings extends StatelessWidget {
         valueListenable: settings.sourceId,
         builder: (context, selected, _) => Column(
           children: [
+            // ArticleSources มาจาก lib/services/sources/article_source.dart
             for (final source in ArticleSources.all)
               ListTile(
                 leading: const Icon(Icons.public),
@@ -726,6 +934,7 @@ class _VersionFooter extends StatelessWidget {
     );
     return Column(
       children: [
+        // KeepLogo มาจาก lib/widgets/keep_logo.dart
         const KeepLogo(size: 32),
         const SizedBox(height: AppSpacing.xs),
         Text(context.l10n.tagline, style: muted),

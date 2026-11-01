@@ -15,6 +15,7 @@ class Validators {
 
   static String? email(String? value) {
     final v = value?.trim() ?? '';
+    // context.l10n มาจาก lib/l10n/l10n.dart
     if (v.isEmpty) return tr.vEmailRequired;
     if (!_emailPattern.hasMatch(v)) return tr.vEmailInvalid;
     return null;
@@ -45,6 +46,7 @@ class Validators {
     return null;
   }
 
+  // AppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
   /// นับตามตัวอักษรที่พิมพ์ (Unicode code point ผ่าน runes) เช่น "ภู" = 2 ตัว ตรงกับที่คนไทยนับ
   /// (ถ้านับแบบกลุ่มที่มองเห็น "ภู" จะกลายเป็น 1 ตัว ชื่อเล่น 2 ตัวอักษรจะไม่ผ่าน)
   /// [l10n] ใช้ตอนหน้าจอแสดงภาษาอื่นอยู่ (หน้าตั้งค่าเริ่มต้นแสดงภาษาที่กำลังเลือก)

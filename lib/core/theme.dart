@@ -142,6 +142,7 @@ class AppTheme {
         filled: true,
         fillColor: scheme.surfaceContainer,
         border: OutlineInputBorder(
+          // AppRadius มาจาก lib/core/radius.dart
           borderRadius: AppRadius.controlAll,
           borderSide: BorderSide(color: scheme.outlineVariant),
         ),
@@ -207,6 +208,7 @@ class AppTheme {
       // เปลี่ยนหน้าแบบเดียวกันทุกระบบ: fade + เลื่อนสั้นๆ เร็วต้น ช้าปลาย (ดู core/motion.dart)
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
+          // GentlePageTransitionsBuilder มาจาก lib/core/motion.dart
           TargetPlatform.iOS: GentlePageTransitionsBuilder(),
           TargetPlatform.android: GentlePageTransitionsBuilder(),
           TargetPlatform.macOS: GentlePageTransitionsBuilder(),

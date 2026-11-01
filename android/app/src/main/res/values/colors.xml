@@ -2,4 +2,5 @@
 <resources>
     <!-- พื้นหลังตอนเปิดแอปก่อน Flutter พร้อม: สีกระดาษ (โหมดสว่าง) ตรงกับหน้าเปิดแอป -->
     <color name="launch_background">#F6F1E7</color>
+	<color name="ic_launcher_background">#121413</color>
 </resources>

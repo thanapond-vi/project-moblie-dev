@@ -29,7 +29,9 @@ Future<void> main() async {
   } catch (_) {}
 
   // 2) ค่าตั้งค่าในเครื่อง + รูปแบบวันที่ของทั้ง 3 ภาษา
+  // SettingsService มาจาก lib/services/settings_service.dart
   await SettingsService.instance.load();
+  // ContentLanguage มาจาก lib/models/content_language.dart
   for (final language in ContentLanguage.values) {
     await initializeDateFormatting(language.code);
   }
@@ -37,6 +39,7 @@ Future<void> main() async {
   // 3) เชื่อม Firebase (ถ้าพลาด แสดงหน้าข้อผิดพลาดแทนการแครช)
   try {
     await Firebase.initializeApp(
+      // DefaultFirebaseOptions มาจาก lib/firebase_options.dart
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } catch (e) {
@@ -44,37 +47,64 @@ Future<void> main() async {
     return;
   }
 
+  // AppRestarter มาจาก lib/core/app_restarter.dart
   runApp(const AppRestarter(child: KeepApp()));
 }
 
-class KeepApp extends StatelessWidget {
+class KeepApp extends StatefulWidget {
   const KeepApp({super.key});
+
+  @override
+  State<KeepApp> createState() => _KeepAppState();
+}
+
+class _KeepAppState extends State<KeepApp> {
+  // สร้าง stream ครั้งเดียว (ถ้าสร้างใน build จะ subscribe ใหม่ทุกครั้งที่ rebuild)
+  // AuthService มาจาก lib/services/auth_service.dart
+  final Stream<User?> _authStream = AuthService().authStateChanges();
 
   @override
   Widget build(BuildContext context) {
     final settings = SettingsService.instance;
-    // ฟังค่า Dark Mode และภาษาของแอป: เปลี่ยนใน Settings แล้วทั้งแอปเปลี่ยนตามทันที
-    return ListenableBuilder(
-      listenable: Listenable.merge([settings.isDarkMode, settings.appLanguage]),
-      builder: (context, _) => MaterialApp(
-        title: 'KEEP',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        darkTheme: AppTheme.dark(),
-        themeMode: settings.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
-        // ภาษาของแอป: ข้อความทั้งหมดมาจากไฟล์ ARB (lib/l10n/arb) ตาม locale นี้
-        locale: settings.appLanguage.value.locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          // ข้อความของ widget สำเร็จรูป (ปุ่ม, date picker, tooltip ของระบบ)
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        navigatorObservers: [routeObserver],
-        home: const LaunchGate(),
+    // ธีม: ยังไม่ล็อกอิน = ตามโหมดสว่าง/มืดของเครื่อง (หน้าเปิดแอป + หน้า login เหมือนกัน)
+    //       ล็อกอินแล้ว = ตามค่าที่ผู้ใช้ตั้งใน Settings
+    return StreamBuilder<User?>(
+      stream: _authStream,
+      initialData: FirebaseAuth.instance.currentUser,
+      builder: (context, auth) => ListenableBuilder(
+        // ฟังค่า Dark Mode และภาษาของแอป: เปลี่ยนใน Settings แล้วทั้งแอปเปลี่ยนตามทันที
+        listenable: Listenable.merge([
+          settings.isDarkMode,
+          settings.appLanguage,
+        ]),
+        builder: (context, _) => _app(settings, signedIn: auth.data != null),
       ),
+    );
+  }
+
+  Widget _app(SettingsService settings, {required bool signedIn}) {
+    return MaterialApp(
+      title: 'KEEP',
+      debugShowCheckedModeBanner: false,
+      // AppTheme มาจาก lib/core/theme.dart
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: !signedIn
+          ? ThemeMode.system
+          : (settings.isDarkMode.value ? ThemeMode.dark : ThemeMode.light),
+      // ภาษาของแอป: ข้อความทั้งหมดมาจากไฟล์ ARB (lib/l10n/arb) ตาม locale นี้
+      locale: settings.appLanguage.value.locale,
+      // AppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        // ข้อความของ widget สำเร็จรูป (ปุ่ม, date picker, tooltip ของระบบ)
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      navigatorObservers: [routeObserver],
+      home: const LaunchGate(),
     );
   }
 }
@@ -90,22 +120,16 @@ class LaunchGate extends StatefulWidget {
 class _LaunchGateState extends State<LaunchGate> {
   bool _launched = false;
 
-  Widget _launchScreen(BuildContext context) {
-    final screen = LaunchScreen(
-      onDone: () => setState(() => _launched = true),
-      sound: SettingsService.instance.launchSound.value,
-    );
-    // ล็อกอินแล้ว = ใช้ธีมที่ผู้ใช้ตั้งไว้ / ยังไม่เคยล็อกอิน = ตามโหมดสว่าง-มืดของเครื่อง
-    if (FirebaseAuth.instance.currentUser != null) return screen;
-    final dark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
-    return Theme(
-      data: dark ? AppTheme.dark() : AppTheme.light(),
-      child: screen,
-    );
-  }
+  // ธีมมาจาก KeepApp แล้ว (ยังไม่ล็อกอิน = ตามเครื่อง) หน้าเปิดแอปจึงใช้ธีมเดียวกับหน้าถัดไปเสมอ
+  // LaunchScreen มาจาก lib/screens/launch_screen.dart
+  Widget _launchScreen(BuildContext context) => LaunchScreen(
+    onDone: () => setState(() => _launched = true),
+    sound: SettingsService.instance.launchSound.value,
+  );
 
   @override
   Widget build(BuildContext context) => AnimatedSwitcher(
+    // AppMotion มาจาก lib/core/motion.dart
     duration: AppMotion.reduced(context) ? Duration.zero : AppMotion.page,
     switchInCurve: AppMotion.pageEnter,
     child: _launched ? const AuthGate() : _launchScreen(context),
@@ -141,6 +165,8 @@ class _AuthGateState extends State<AuthGate> {
           );
         }
         final user = snapshot.data;
+        // AuthScreen มาจาก lib/screens/auth_screen.dart
+        // AppShell มาจาก lib/screens/app_shell.dart
         return user == null ? const AuthScreen() : AppShell(user: user);
       },
     );
@@ -160,6 +186,7 @@ class _StartupErrorApp extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
+              // context.l10n มาจาก lib/l10n/l10n.dart
               tr.errFirebaseInit(message),
               textAlign: TextAlign.center,
             ),

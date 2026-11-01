@@ -44,6 +44,7 @@ enum ScoreLevel {
     none => Icons.hourglass_empty,
   };
 
+  // AppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
   String label(AppLocalizations l10n) => switch (this) {
     mastered => l10n.scoreMastered,
     good => l10n.scoreGood,
@@ -104,11 +105,13 @@ class ScorePill extends StatelessWidget {
     final (bg, fg) = level.container(theme.colorScheme);
     return Semantics(
       label: score == null
+          // context.l10n มาจาก lib/l10n/l10n.dart
           ? context.l10n.notEvaluated
           : context.l10n.scoreSemantics(score!, level.label(context.l10n)),
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(
+          // AppSpacing มาจาก lib/core/spacing.dart
           horizontal: AppSpacing.xs + 2,
           vertical: AppSpacing.xxs,
         ),
@@ -156,6 +159,7 @@ class ScoreRing extends StatelessWidget {
           children: [
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: score / 100),
+              // AppMotion มาจาก lib/core/motion.dart
               duration: AppMotion.reduced(context)
                   ? Duration.zero
                   : const Duration(milliseconds: 1300),
@@ -176,6 +180,7 @@ class ScoreRing extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // AnimatedCounter มาจาก lib/widgets/animated_counter.dart
                     AnimatedCounter(
                       key: ValueKey(score),
                       value: score,

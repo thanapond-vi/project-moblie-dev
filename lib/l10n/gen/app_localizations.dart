@@ -1719,6 +1719,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'no data yet'**
   String get noData;
+
+  /// No description provided for @range7.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get range7;
+
+  /// No description provided for @range30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get range30;
+
+  /// No description provided for @rangeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get rangeAll;
+
+  /// No description provided for @statsMinutesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading time'**
+  String get statsMinutesTitle;
+
+  /// No description provided for @statsScoresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall scores'**
+  String get statsScoresTitle;
+
+  /// No description provided for @statsCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading calendar'**
+  String get statsCalendarTitle;
+
+  /// No description provided for @statsTopicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Topics you read'**
+  String get statsTopicsTitle;
+
+  /// No description provided for @statsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing read in this period yet. Pick a random article from the Library tab.'**
+  String get statsEmpty;
+
+  /// No description provided for @changeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'↑ {value} from last period'**
+  String changeUp(String value);
+
+  /// No description provided for @changeDown.
+  ///
+  /// In en, this message translates to:
+  /// **'↓ {value} from last period'**
+  String changeDown(String value);
+
+  /// No description provided for @changeSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as last period'**
+  String get changeSame;
+
+  /// No description provided for @showTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as table'**
+  String get showTable;
+
+  /// No description provided for @showChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as chart'**
+  String get showChart;
+
+  /// No description provided for @chartTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the chart to see values'**
+  String get chartTapHint;
+
+  /// No description provided for @legendLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get legendLess;
+
+  /// No description provided for @legendMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get legendMore;
+
+  /// No description provided for @weekOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Week of {date}'**
+  String weekOf(String date);
+
+  /// No description provided for @minutesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} min in total. Most: {max} min, {day}.'**
+  String minutesSummary(int total, int max, String day);
+
+  /// No description provided for @scoresSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} scored articles. Latest {latest}, average {average}.'**
+  String scoresSummary(int count, int latest, int average);
+
+  /// No description provided for @calendarSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on {days} days in the last 12 weeks. Longest streak {longest} days.'**
+  String calendarSummary(int days, int longest);
+
+  /// No description provided for @topicsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Most read: {topic}, {count} articles.'**
+  String topicsSummary(String topic, int count);
+
+  /// No description provided for @longestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Longest streak: 1 day} other{Longest streak: {count} days}}'**
+  String longestStreak(int count);
+
+  /// No description provided for @topicValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} · avg {score}'**
+  String topicValue(int count, int score);
+
+  /// No description provided for @otherTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherTopics;
+
+  /// No description provided for @noScoresYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No scores in this period yet'**
+  String get noScoresYet;
+
+  /// No description provided for @reviewDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing to review today} =1{1 article to review} other{{count} articles to review}}'**
+  String reviewDueTitle(int count);
+
+  /// No description provided for @reviewDueSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall it first, then check the key points.'**
+  String get reviewDueSub;
+
+  /// No description provided for @reviewNextOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Next review: {date}'**
+  String reviewNextOn(String date);
+
+  /// No description provided for @reviewBoxesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory boxes'**
+  String get reviewBoxesTitle;
+
+  /// No description provided for @reviewBoxesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember it and the article moves to a box with a longer gap. Forget it and it goes back to box 1.'**
+  String get reviewBoxesHint;
+
+  /// No description provided for @boxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Box {box}'**
+  String boxLabel(int box);
+
+  /// No description provided for @everyDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{every day} other{every {count} days}}'**
+  String everyDays(int count);
+
+  /// No description provided for @dueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Due today'**
+  String get dueToday;
+
+  /// No description provided for @overdueDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day overdue} other{{count} days overdue}}'**
+  String overdueDays(int count);
+
+  /// No description provided for @comingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get comingUp;
+
+  /// No description provided for @dueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String dueOn(String date);
+
+  /// No description provided for @startReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get startReview;
+
+  /// No description provided for @reviewEmptyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Read an article and save your summary first. It comes up for review the next day.'**
+  String get reviewEmptyAll;
+
+  /// No description provided for @reviewAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All caught up. Come back {date}.'**
+  String reviewAllDone(String date);
+
+  /// No description provided for @recallPromptGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you remember about this article? Start with the main idea.'**
+  String get recallPromptGeneric;
+
+  /// No description provided for @recallJotHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Jot down what you remember (optional, not saved)'**
+  String get recallJotHint;
+
+  /// No description provided for @reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal key points'**
+  String get reveal;
+
+  /// No description provided for @reviewYourSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your earlier summary'**
+  String get reviewYourSummary;
+
+  /// No description provided for @rateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How well did you remember?'**
+  String get rateTitle;
+
+  /// No description provided for @rateAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot'**
+  String get rateAgain;
+
+  /// No description provided for @rateHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get rateHard;
+
+  /// No description provided for @rateGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get rateGood;
+
+  /// No description provided for @rateEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get rateEasy;
+
+  /// No description provided for @nextInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{in 1 day} other{in {count} days}}'**
+  String nextInDays(int count);
+
+  /// No description provided for @reviewSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Next review tomorrow} other{Next review in {count} days}}'**
+  String reviewSaved(int count);
+
+  /// No description provided for @reviewSuccessCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{passed} of {total} reviews remembered'**
+  String reviewSuccessCaption(int passed, int total);
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your reading history, summaries, review progress and profile. It can\'t be undone.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to confirm'**
+  String get deleteAccountPassword;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete forever'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted'**
+  String get accountDeleted;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @orDivider.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orDivider;
+
+  /// No description provided for @errGoogleSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in isn\'t set up for this app yet.'**
+  String get errGoogleSetup;
+
+  /// No description provided for @errGoogleFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign in with Google. Please try again.'**
+  String get errGoogleFailed;
+
+  /// No description provided for @errAccountOtherProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'This email already uses a different sign-in method. Log in with your password.'**
+  String get errAccountOtherProvider;
+
+  /// No description provided for @deleteAccountGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be asked to sign in with Google again to confirm.'**
+  String get deleteAccountGoogle;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @appleComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple is coming soon'**
+  String get appleComingSoon;
 }
 
 class _AppLocalizationsDelegate

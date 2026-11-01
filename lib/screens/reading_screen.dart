@@ -34,11 +34,14 @@ import '../core/spacing.dart';
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen.start({
     super.key,
+    // ContentLanguage มาจาก lib/models/content_language.dart
     required ContentLanguage this.language,
+    // ReadingTopic มาจาก lib/models/reading_topic.dart
     required ReadingTopic this.topic,
     required Set<String> this.excludeKeys,
   }) : session = null;
 
+  // ReadingSession มาจาก lib/models/reading_session.dart
   const ReadingScreen.resume({super.key, required ReadingSession this.session})
     : language = null,
       topic = null,
@@ -57,9 +60,13 @@ class ReadingScreen extends StatefulWidget {
 
 class _ReadingScreenState extends State<ReadingScreen>
     with WidgetsBindingObserver {
+  // ArticleSources มาจาก lib/services/sources/article_source.dart
+  // SettingsService มาจาก lib/services/settings_service.dart
   /// แหล่งข้อมูลที่เลือกใน Settings (ตอนนี้คือ Wikipedia)
   final _source = ArticleSources.byId(SettingsService.instance.sourceId.value);
+  // SessionService มาจาก lib/services/session_service.dart
   final _sessions = SessionService.instance;
+  // TtsService มาจาก lib/services/tts_service.dart
   final _tts = TtsService.create();
 
   ReadingSession? _session;
@@ -94,6 +101,7 @@ class _ReadingScreenState extends State<ReadingScreen>
   /// AI ตั้งคำถามไม่สำเร็จ → แสดงคำถามทั่วไปแทน (ไม่ขึ้น error ให้รบกวนการอ่าน)
   bool _questionFailed = false;
 
+  // Article มาจาก lib/models/article.dart
   Article? get _article => _session?.article;
   Duration get _elapsed => _baseElapsed + _stopwatch.elapsed;
   Duration get _limit => Duration(seconds: _session?.limitSeconds ?? 0);
@@ -174,6 +182,7 @@ class _ReadingScreenState extends State<ReadingScreen>
         article: article,
         limitSeconds: SettingsService.instance.timerMinutes.value * 60,
         elapsedSeconds: 0,
+        // SessionStage มาจาก lib/models/reading_session.dart
         stage: SessionStage.reading,
         draftSummary: '',
         updatedAt: DateTime.now(),
@@ -186,12 +195,15 @@ class _ReadingScreenState extends State<ReadingScreen>
       });
       _startTimer(); // ได้บทความแล้วเริ่มจับเวลาทันที
       _loadRecallQuestion();
+      // TopicExhaustedException มาจาก lib/services/sources/article_source.dart
     } on TopicExhaustedException {
       // หมวดนี้อ่านครบหมดแล้ว → กลับหน้าแรกพร้อมบอกว่าหมดของแหล่งข้อมูลไหน
       if (!mounted) return;
       final topic = widget.topic!;
+      // showMessage มาจาก lib/widgets/ui_helpers.dart
       showMessage(
         context,
+        // context.l10n มาจาก lib/l10n/l10n.dart
         context.l10n.topicExhausted(
           topic.preset?.label(context.l10n) ?? topic.query ?? '',
           _source.name,
@@ -199,6 +211,7 @@ class _ReadingScreenState extends State<ReadingScreen>
         ),
       );
       Navigator.pop(context);
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -213,6 +226,7 @@ class _ReadingScreenState extends State<ReadingScreen>
     final session = _session;
     if (session == null || session.recallQuestion != null) return;
     try {
+      // SlmService มาจาก lib/services/slm_service.dart
       final question = await SlmService().recallQuestion(
         title: session.article.title,
         reference: session.article.reference,
@@ -246,6 +260,7 @@ class _ReadingScreenState extends State<ReadingScreen>
   Future<void> _toggleBookmark() async {
     final article = _article;
     if (article == null) return;
+    // BookmarkService มาจาก lib/services/bookmark_service.dart
     final saved = await BookmarkService.instance.toggle(article);
     if (!mounted) return;
     showMessage(
@@ -283,6 +298,7 @@ class _ReadingScreenState extends State<ReadingScreen>
   void _pauseTimer() {
     _stopwatch.stop();
     _ticker?.cancel();
+    // TtsStatus มาจาก lib/services/tts_service.dart
     if (_tts.status.value == TtsStatus.playing) _tts.pause();
     _persist();
     if (mounted) setState(() {});
@@ -338,6 +354,7 @@ class _ReadingScreenState extends State<ReadingScreen>
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
+        // SummaryScreen มาจาก lib/screens/summary_screen.dart
         builder: (_) => SummaryScreen.fromSession(session: next),
       ),
     );
@@ -390,6 +407,7 @@ class _ReadingScreenState extends State<ReadingScreen>
     if (ctx == null) return;
     Scrollable.ensureVisible(
       ctx,
+      // AppMotion มาจาก lib/core/motion.dart
       duration: AppMotion.reduced(context) ? Duration.zero : AppMotion.scrollTo,
       curve: AppMotion.entranceCurve,
       alignment: 0.2,
@@ -489,6 +507,7 @@ class _ReadingScreenState extends State<ReadingScreen>
             : SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
+                    // AppSpacing มาจาก lib/core/spacing.dart
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.xs,
                   ),
@@ -517,6 +536,7 @@ class _ReadingScreenState extends State<ReadingScreen>
       );
     }
     if (_error != null) {
+      // ErrorView มาจาก lib/widgets/ui_helpers.dart
       return ErrorView(message: _error!, onRetry: _loadArticle);
     }
     final article = _article;
@@ -539,6 +559,7 @@ class _ReadingScreenState extends State<ReadingScreen>
         ),
         Expanded(
           // พื้นหลังโคมไฟ: แสงตามนิ้ว / หายใจตอนไม่ได้แตะระหว่างจับเวลา
+          // ReadingLampBackground มาจาก lib/widgets/reading_lamp.dart
           child: ReadingLampBackground(
             active: _stopwatch.isRunning,
             child: Padding(
@@ -572,6 +593,7 @@ class _ReadingScreenState extends State<ReadingScreen>
                             Text(
                               article.title,
                               style: theme.textTheme.headlineSmall?.copyWith(
+                                // AppTheme มาจาก lib/core/theme.dart
                                 color: AppTheme.reading(context).color,
                               ),
                             ),
@@ -593,10 +615,12 @@ class _ReadingScreenState extends State<ReadingScreen>
                                 if (article.topic != null)
                                   _MetaPill(
                                     icon:
+                                        // ArticleTag มาจาก lib/models/article_tag.dart
                                         ArticleTag.fromId(
                                           article.topic!,
                                         )?.icon ??
                                         Icons.tag,
+                                    // tagLabel มาจาก lib/l10n/l10n.dart
                                     label: tagLabel(article.topic!, l10n),
                                   ),
                                 _MetaPill(
@@ -653,6 +677,7 @@ class _FrostedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ClipRRect(
+      // AppRadius มาจาก lib/core/radius.dart
       borderRadius: AppRadius.sheetTop,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),

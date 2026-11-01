@@ -10,6 +10,7 @@ class ReadingStats {
     required this.todayMinutes,
   });
 
+  // StudyLog มาจาก lib/models/study_log.dart
   factory ReadingStats.from(List<StudyLog> logs, {DateTime? now}) {
     final today = _day(now ?? DateTime.now());
     final scored = [

@@ -44,6 +44,7 @@ class BookmarkService {
     saved.value = _items.keys.toSet();
   }
 
+  // Article มาจาก lib/models/article.dart
   bool isSaved(Article article) => saved.value.contains(article.readKey);
 
   /// บันทึก ↔ เลิกบันทึก คืนค่า true ถ้าตอนนี้ถูกบันทึกอยู่

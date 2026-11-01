@@ -23,6 +23,7 @@ class ReadingSession {
     this.recallQuestion,
   });
 
+  // Article มาจาก lib/models/article.dart
   final Article article;
 
   /// เวลาอ่านที่ตั้งไว้ตอนเริ่ม (เปลี่ยนค่าตั้งค่าทีหลังก็ไม่กระทบรอบนี้)

@@ -27,6 +27,7 @@ class Article {
 
   /// ลิงก์ไปหน้าบทความจริง ใช้กับปุ่ม "ค้นต่อ"
   final String url;
+  // ContentLanguage มาจาก lib/models/content_language.dart
   final ContentLanguage language;
 
   /// หมวดที่เลือกตอนสุ่ม (id หมวดยอดฮิต หรือคำที่ค้นเอง) null = สุ่มทุกหมวด

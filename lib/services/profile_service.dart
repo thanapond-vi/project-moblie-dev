@@ -23,6 +23,7 @@ class ProfileService {
   ProfileService._();
   static final ProfileService instance = ProfileService._();
 
+  // UserProfile มาจาก lib/models/user_profile.dart
   final ValueNotifier<UserProfile?> current = ValueNotifier(null);
 
   /// true = ผู้ใช้ใหม่ที่ยังไม่มีเอกสารโปรไฟล์ → หน้าแรกจะเปิดหน้าตั้งค่าเริ่มต้นให้
@@ -49,6 +50,7 @@ class ProfileService {
     return local.length >= 2 ? local : 'Reader';
   }
 
+  // AvatarPreset มาจาก lib/models/user_profile.dart
   /// เอกสารรุ่นเก่าใช้ field `selectedCoverId` (ตอนที่ภาพสัตว์เป็นปก) → อ่านเป็นตัวละครแทน
   AvatarPreset _presetFrom(Map<String, dynamic>? data) => AvatarPreset.fromId(
     (data?['avatarPresetId'] ?? data?['selectedCoverId']) as String?,
@@ -58,6 +60,7 @@ class ProfileService {
   Future<void> load(User user) async {
     _user = user;
     needsSetup.value = false;
+    // SettingsService มาจาก lib/services/settings_service.dart
     final prefs = await SettingsService.instance.prefs;
     // ระหว่างรอ ผู้ใช้ logout/สลับบัญชีไปแล้ว
     if (_user?.uid != user.uid) return;
@@ -184,6 +187,8 @@ class ProfileService {
 
   String _encode(Uint8List bytes) {
     if (bytes.length > _maxAvatarBytes) {
+      // context.l10n มาจาก lib/l10n/l10n.dart
+      // AppException มาจาก lib/core/app_exception.dart
       throw AppException(tr.errImageTooLarge);
     }
     return base64Encode(bytes);

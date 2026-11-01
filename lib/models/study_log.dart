@@ -23,6 +23,11 @@ class StudyLog {
     required this.createdAt,
     required this.updatedAt,
     this.keyPoints = const [],
+    this.recallQuestion,
+    this.reviewBox = 0,
+    this.nextReviewAt,
+    this.reviewsTotal = 0,
+    this.reviewsPassed = 0,
   });
 
   /// document ID ของ Firestore (ไม่ได้เก็บเป็น field ในเอกสาร)
@@ -36,6 +41,7 @@ class StudyLog {
 
   /// แท็กไม่เกิน 3 อัน: id หมวดยอดฮิต (เช่น "history") หรือหัวข้อที่ค้นเอง
   final List<String> tags;
+  // ContentLanguage มาจาก lib/models/content_language.dart
   final ContentLanguage language;
 
   /// แหล่งข้อมูลและ id ของบทความ ใช้กันการสุ่มเจอบทความที่อ่านแล้ว (บันทึกเก่าไม่มี pageId)
@@ -48,8 +54,24 @@ class StudyLog {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  // KeyPoint มาจาก lib/models/key_point.dart
   /// ประเด็นสำคัญที่ AI ตรวจตอนให้คะแนนล่าสุด (บันทึกเก่าไม่มี = ว่าง)
   final List<KeyPoint> keyPoints;
+
+  /// คำถามชวนนึกที่ AI ตั้งตอนอ่าน (ใช้ถามซ้ำตอนทบทวน) บันทึกเก่าไม่มี = null
+  final String? recallQuestion;
+
+  // ---- การทบทวนแบบกล่องเลื่อนขั้น (Leitner) ดู review_schedule.dart ----
+
+  /// กล่องปัจจุบัน 1–5 (0 = ยังไม่เคยทบทวน)
+  final int reviewBox;
+
+  /// วันที่ถึงรอบทบทวนครั้งถัดไป (null = ยังไม่เคยทบทวน → นับจากวันที่อ่าน)
+  final DateTime? nextReviewAt;
+
+  /// จำนวนครั้งที่ทบทวนทั้งหมด และครั้งที่จำได้ (ดี/ง่าย) ใช้คิด "ทบทวนสำเร็จ %"
+  final int reviewsTotal;
+  final int reviewsPassed;
 
   bool get isEvaluated => aiScore != null;
 
@@ -70,6 +92,7 @@ class StudyLog {
       userSummary: data['userSummary'] as String? ?? '',
       readingTimeMinutes: (data['readingTimeMinutes'] as num?)?.toInt() ?? 0,
       // บันทึกเก่าไม่มี tags แต่อาจมี category (หมวดเดียว) → แปลงเป็นแท็ก
+      // ArticleTag มาจาก lib/models/article_tag.dart
       tags: ArticleTag.normalize(
         data['tags'] as List? ??
             [if (data['category'] != null) data['category']],
@@ -87,6 +110,11 @@ class StudyLog {
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
       keyPoints: KeyPoint.listFrom(data['keyPoints'] as List?),
+      recallQuestion: data['recallQuestion'] as String?,
+      reviewBox: (data['reviewBox'] as num?)?.toInt() ?? 0,
+      nextReviewAt: (data['nextReviewAt'] as Timestamp?)?.toDate(),
+      reviewsTotal: (data['reviewsTotal'] as num?)?.toInt() ?? 0,
+      reviewsPassed: (data['reviewsPassed'] as num?)?.toInt() ?? 0,
     );
   }
 }

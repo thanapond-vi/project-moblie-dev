@@ -13,6 +13,7 @@ import '../../models/content_language.dart';
 import '../../models/reading_topic.dart';
 import 'article_source.dart';
 
+// ArticleSource มาจาก lib/services/sources/article_source.dart
 /// แหล่งข้อมูล Wikipedia (ฟรี ไม่ต้องใช้ API key) รองรับ English / Chinese / Thai
 ///
 /// ทำ 2 ขั้น (async ทั้งคู่):
@@ -49,6 +50,7 @@ class WikipediaSource implements ArticleSource {
   @override
   String get name => 'Wikipedia';
 
+  // ContentLanguage มาจาก lib/models/content_language.dart
   @override
   Set<ContentLanguage> get languages => ContentLanguage.values.toSet();
 
@@ -61,9 +63,11 @@ class WikipediaSource implements ArticleSource {
         ...params,
       });
 
+  // Article มาจาก lib/models/article.dart
   @override
   Future<Article> fetchRandomArticle({
     required ContentLanguage language,
+    // ReadingTopic มาจาก lib/models/reading_topic.dart
     required ReadingTopic topic,
     required Set<String> excludeKeys,
   }) async {
@@ -82,7 +86,10 @@ class WikipediaSource implements ArticleSource {
         // ไล่ดูผลค้นหาครบทุกเรื่องแล้ว แต่อ่านไปหมดแล้ว
         // = หมวดนี้ไม่เหลือบทความใหม่จริงๆ ไม่ต้องสุ่มซ้ำ
         if (candidates.isEmpty && batch.isComplete) {
+          // context.l10n มาจาก lib/l10n/l10n.dart
+          // AppException มาจาก lib/core/app_exception.dart
           if (batch.items.isEmpty) throw AppException(tr.errNoArticle);
+          // TopicExhaustedException มาจาก lib/services/sources/article_source.dart
           throw const TopicExhaustedException();
         }
       }

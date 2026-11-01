@@ -54,9 +54,13 @@ class HomeScreen extends StatefulWidget {
 
 /// RouteAware: ให้ RouteObserver (ใน main.dart) แจ้งเมื่อหน้านี้ถูกกลับมาแสดงอีกครั้ง
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  // StudyLogRepository มาจาก lib/services/study_log_repository.dart
   final _repo = StudyLogRepository();
+  // SessionService มาจาก lib/services/session_service.dart
   final _sessions = SessionService.instance;
+  // ProfileService มาจาก lib/services/profile_service.dart
   final _profiles = ProfileService.instance;
+  // StudyLog มาจาก lib/models/study_log.dart
   late Stream<List<StudyLog>> _logsStream;
 
   /// งานโหลดเซสชันจากเครื่อง: เก็บ Future ไว้ เพื่อให้ปุ่มสุ่มรอจนโหลดเสร็จก่อนตัดสินใจล็อก
@@ -78,10 +82,12 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     _logsStream = _repo.watchLogs(widget.user.uid);
     // โหลดเซสชันที่ค้างไว้ของผู้ใช้คนนี้จากเครื่อง (ไม่ await ใน initState การ์ดจะโผล่เองเมื่อโหลดเสร็จ)
     _sessionLoaded = _sessions.load(widget.user.uid);
+    // BookmarkService มาจาก lib/services/bookmark_service.dart
     BookmarkService.instance.load(widget.user.uid);
     // ผู้ใช้ใหม่ (ยังไม่มีโปรไฟล์) → เปิดหน้าตั้งค่าเริ่มต้น
     _profiles.needsSetup.addListener(_openSetupIfNeeded);
     _profiles.load(widget.user);
+    // GreetingService มาจาก lib/services/greeting_service.dart
     GreetingService.instance.load();
   }
 
@@ -110,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
       context,
       MaterialPageRoute(
         fullscreenDialog: true,
+        // OnboardingScreen มาจาก lib/screens/onboarding_screen.dart
         builder: (_) => OnboardingScreen(user: widget.user),
       ),
     );
@@ -121,15 +128,20 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     await _sessionLoaded;
     if (!mounted || _readKeys == null) return;
     if (_sessions.current.value != null) {
+      // context.l10n มาจาก lib/l10n/l10n.dart
+      // showMessage มาจาก lib/widgets/ui_helpers.dart
       showMessage(context, context.l10n.sessionLockedMessage);
       return;
     }
+    // showStartSessionSheet มาจาก lib/widgets/start_session_sheet.dart
     final topic = await showStartSessionSheet(context);
     if (topic == null || !mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
+        // ReadingScreen มาจาก lib/screens/reading_screen.dart
         builder: (_) => ReadingScreen.start(
+          // SettingsService มาจาก lib/services/settings_service.dart
           language: SettingsService.instance.articleLanguage.value,
           topic: topic,
           excludeKeys: _readKeys!,
@@ -138,17 +150,21 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     );
   }
 
+  // ReadingSession มาจาก lib/models/reading_session.dart
   /// แตะการ์ดเซสชัน: อ่านต่อ (ถ้ายังอ่านไม่จบ) หรือไปเขียนสรุปต่อ (ถ้าอ่านจบแล้ว)
   void _resume(ReadingSession session) => Navigator.push(
     context,
     MaterialPageRoute(
+      // SessionStage มาจาก lib/models/reading_session.dart
       builder: (_) => session.stage == SessionStage.reading
           ? ReadingScreen.resume(session: session)
+          // SummaryScreen มาจาก lib/screens/summary_screen.dart
           : SummaryScreen.fromSession(session: session),
     ),
   );
 
   Future<void> _discardSession(ReadingSession session) async {
+    // confirmDialog มาจาก lib/widgets/ui_helpers.dart
     final ok = await confirmDialog(
       context,
       title: context.l10n.discardSessionTitle,
@@ -172,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         showMessage(context, context.l10n.deletedMessage(log.articleTitle));
       }
       return true;
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       if (mounted) showMessage(context, e.message, isError: true);
       return false;
@@ -195,12 +212,14 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      // KeepAppBar มาจาก lib/widgets/keep_app_bar.dart
       appBar: KeepAppBar(onOpenProfile: widget.onOpenProfile),
       // StreamBuilder: rebuild รายการเองทุกครั้งที่ข้อมูลใน Firestore เปลี่ยน (realtime)
       body: StreamBuilder<List<StudyLog>>(
         stream: _logsStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            // ErrorView มาจาก lib/widgets/ui_helpers.dart
             return ErrorView(
               message: l10n.historyLoadError('${snapshot.error}'),
               onRetry: () => setState(() {
@@ -216,10 +235,12 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             for (final log in logs)
               if (log.readKey != null) log.readKey!,
           };
+          // ReadingStats มาจาก lib/models/reading_stats.dart
           final stats = ReadingStats.from(logs);
 
           return ListView(
             padding: EdgeInsets.only(
+              // AppSpacing มาจาก lib/core/spacing.dart
               left: AppSpacing.md,
               top: AppSpacing.xs,
               right: AppSpacing.md,
@@ -227,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
               bottom: AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
             ),
             children: [
+              // EntranceFade มาจาก lib/widgets/motion_widgets.dart
               EntranceFade(
                 child: _HeroCard(stats: stats, replay: _replay),
               ),
@@ -237,6 +259,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                 valueListenable: _sessions.current,
                 builder: (context, session, _) => EntranceFade(
                   index: 1,
+                  // Pressable มาจาก lib/widgets/motion_widgets.dart
                   child: Pressable(
                     child: session == null
                         ? _RandomArticleCard(onTap: _startNew)
@@ -268,6 +291,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                     margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.errorContainer,
+                      // AppRadius มาจาก lib/core/radius.dart
                       borderRadius: AppRadius.cardAll,
                     ),
                     child: Icon(
@@ -310,6 +334,7 @@ class _HeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    // ReadingLampColors มาจาก lib/core/theme.dart
     final lamp = ReadingLampColors.of(context);
     final l10n = context.l10n;
     return DecoratedBox(
@@ -334,6 +359,7 @@ class _HeroCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
+                  // UserProfile มาจาก lib/models/user_profile.dart
                   child: ValueListenableBuilder<UserProfile?>(
                     valueListenable: ProfileService.instance.current,
                     builder: (context, profile, _) => Text(
@@ -355,6 +381,7 @@ class _HeroCard extends StatelessWidget {
               valueListenable: GreetingService.instance.text,
               // AnimatedSwitcher: ข้อความสำรอง → ข้อความจาก AI ค่อยๆ fade เปลี่ยน ไม่กระพริบ
               builder: (context, text, _) => AnimatedSwitcher(
+                // AppMotion มาจาก lib/core/motion.dart
                 duration: AppMotion.reduced(context)
                     ? Duration.zero
                     : Durations.long2,
@@ -372,6 +399,7 @@ class _HeroCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
+                    // StatTile มาจาก lib/widgets/stat_tile.dart
                     child: StatTile(
                       key: ValueKey('total-$replay'),
                       value: stats.totalMinutes,
@@ -754,6 +782,7 @@ class _SessionCard extends StatelessWidget {
                       [
                         article.language.label,
                         if (article.topic != null)
+                          // tagLabel มาจาก lib/l10n/l10n.dart
                           tagLabel(article.topic!, l10n),
                         reading
                             ? l10n.timeLeft('$mm:$ss')
@@ -836,6 +865,7 @@ class _LogCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final l10n = context.l10n;
+    // ScoreLevel มาจาก lib/widgets/score_badge.dart
     final level = ScoreLevel.of(log.aiScore);
     // วันที่แสดงตามภาษาของแอป
     final date = DateFormat(
@@ -888,6 +918,7 @@ class _LogCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.xs),
+                  // ScorePill มาจาก lib/widgets/score_badge.dart
                   ScorePill(score: log.aiScore),
                 ],
               ),
@@ -979,6 +1010,7 @@ class _TagPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
+            // ArticleTag มาจาก lib/models/article_tag.dart
             ArticleTag.fromId(tag)?.icon ?? Icons.tag,
             size: 12,
             color: scheme.onSurfaceVariant,

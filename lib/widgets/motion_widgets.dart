@@ -18,6 +18,7 @@ class EntranceFade extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // AppMotion มาจาก lib/core/motion.dart
     if (AppMotion.reduced(context)) return child;
 
     final delay = AppMotion.stagger * index.clamp(0, AppMotion.maxStaggered);

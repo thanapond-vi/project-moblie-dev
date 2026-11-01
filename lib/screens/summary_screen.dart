@@ -34,9 +34,11 @@ import 'reading_screen.dart';
 class SummaryScreen extends StatefulWidget {
   const SummaryScreen.fromSession({
     super.key,
+    // ReadingSession มาจาก lib/models/reading_session.dart
     required ReadingSession this.session,
   }) : log = null;
 
+  // StudyLog มาจาก lib/models/study_log.dart
   const SummaryScreen.edit({super.key, required StudyLog this.log})
     : session = null;
 
@@ -50,7 +52,9 @@ class SummaryScreen extends StatefulWidget {
 class _SummaryScreenState extends State<SummaryScreen> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
+  // SlmService มาจาก lib/services/slm_service.dart
   final _slm = SlmService();
+  // StudyLogRepository มาจาก lib/services/study_log_repository.dart
   final _repo = StudyLogRepository();
 
   late final String _title;
@@ -80,6 +84,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
   int? _score;
   String? _feedback;
 
+  // KeyPoint มาจาก lib/models/key_point.dart
   /// ประเด็นสำคัญที่ AI ตรวจ (ครอบคลุม/ขาด) และสิ่งที่เขียนผิดจากบทความ
   List<KeyPoint> _keyPoints = const [];
   List<String> _issues = const [];
@@ -126,6 +131,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       _controller.text = widget.session!.draftSummary;
       _logId = _repo.newLogId();
       // หมวดที่เลือกตอนสุ่มเป็นแท็กแรกให้ก่อน (AI จะเติมให้ครบหลังประเมิน)
+      // ArticleTag มาจาก lib/models/article_tag.dart
       _tags = ArticleTag.normalize([article.topic]);
     }
   }
@@ -153,6 +159,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
     try {
       final result = await _slm.evaluate(
         // Feedback เป็นภาษาของแอปที่ผู้ใช้เลือก (ไม่จำเป็นต้องตรงกับภาษาบทความ)
+        // SettingsService มาจาก lib/services/settings_service.dart
         language: SettingsService.instance.appLanguage.value,
         articleTitle: _title,
         originalContent: _originalContent,
@@ -174,6 +181,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         _evaluating = false;
       });
       await _save();
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       // AI ล่ม/timeout: ข้อความที่พิมพ์ยังอยู่ครบ ผู้ใช้เลือกได้ว่าจะลองใหม่หรือบันทึกไว้ก่อน
       if (!mounted) return;
@@ -189,8 +197,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
     if (!_formKey.currentState!.validate()) return;
     // ถ้ามีคะแนนเดิมอยู่ ต้องถามก่อน เพราะการบันทึกแบบนี้จะลบคะแนนเดิมทิ้ง
     if (_score != null) {
+      // confirmDialog มาจาก lib/widgets/ui_helpers.dart
       final ok = await confirmDialog(
         context,
+        // context.l10n มาจาก lib/l10n/l10n.dart
         title: context.l10n.removeScoreTitle,
         message: context.l10n.removeScoreMessage,
         confirmLabel: context.l10n.save,
@@ -234,6 +244,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
           aiScore: _score,
           aiFeedback: _feedback,
           keyPoints: _keyPoints,
+          // คำถามอาจมาถึงหลังเปิดหน้านี้ → อ่านจากเซสชันล่าสุดก่อน
+          recallQuestion:
+              // SessionService มาจาก lib/services/session_service.dart
+              SessionService.instance.current.value?.recallQuestion ??
+              session.recallQuestion,
         );
         _persisted = true;
         _earnedMinutes = session.readingMinutes;
@@ -252,6 +267,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       }
       _savedText = summary;
       _savedTags = tags;
+      // showMessage มาจาก lib/widgets/ui_helpers.dart
       if (mounted) showMessage(context, context.l10n.savedMessage);
     } on AppException catch (e) {
       if (mounted) showMessage(context, e.message, isError: true);
@@ -279,6 +295,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
   Future<void> _readNext() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
+    // showStartSessionSheet มาจาก lib/widgets/start_session_sheet.dart
     final topic = await showStartSessionSheet(context);
     if (topic == null || !mounted) return;
     // บทความที่เคยอ่านแล้ว (รวมเรื่องที่เพิ่งบันทึก) ห้ามสุ่มซ้ำ
@@ -298,6 +315,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
+        // ReadingScreen มาจาก lib/screens/reading_screen.dart
         builder: (_) => ReadingScreen.start(
           language: SettingsService.instance.articleLanguage.value,
           topic: topic,
@@ -358,6 +376,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
             key: _formKey,
             child: ListView(
               padding: const EdgeInsets.only(
+                // AppSpacing มาจาก lib/core/spacing.dart
                 left: AppSpacing.lg,
                 top: AppSpacing.xs,
                 right: AppSpacing.lg,
@@ -380,12 +399,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   maxLines: 16,
                   keyboardType: TextInputType.multiline,
                   textCapitalization: TextCapitalization.sentences,
+                  // AppTheme มาจาก lib/core/theme.dart
                   style: AppTheme.readingInput(context),
                   decoration: InputDecoration(
                     hintText: l10n.summaryHint,
                     alignLabelWithHint: true,
                     helperText: l10n.summaryCounter(
                       _controller.text.trim().length,
+                      // Validators มาจาก lib/core/validators.dart
                       Validators.minSummaryLength,
                     ),
                   ),
@@ -428,6 +449,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 ],
                 if (_aiError != null) ...[
                   const SizedBox(height: AppSpacing.md),
+                  // EntranceFade มาจาก lib/widgets/motion_widgets.dart
                   EntranceFade(
                     // liveRegion: ผลมาถึงทีหลัง → โปรแกรมอ่านหน้าจอประกาศให้รู้
                     child: Semantics(
@@ -444,6 +466,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 if (_earnedMinutes != null) ...[
                   const SizedBox(height: AppSpacing.md),
                   Center(
+                    // EarnedBadge มาจาก lib/widgets/animated_counter.dart
                     child: EarnedBadge(
                       label: l10n.earnedMinutes(_earnedMinutes!),
                     ),
@@ -565,6 +588,7 @@ class _TagEditor extends StatelessWidget {
           runSpacing: 8,
           children: [
             for (final tag in options)
+              // SelectedScale มาจาก lib/widgets/motion_widgets.dart
               SelectedScale(
                 selected: tags.contains(tag),
                 child: FilterChip(
@@ -572,6 +596,7 @@ class _TagEditor extends StatelessWidget {
                     ArticleTag.fromId(tag)?.icon ?? Icons.tag,
                     size: 16,
                   ),
+                  // tagLabel มาจาก lib/l10n/l10n.dart
                   label: Text(tagLabel(tag, l10n)),
                   selected: tags.contains(tag),
                   onSelected: enabled ? (_) => onToggle(tag) : null,
@@ -610,12 +635,14 @@ class _ResultCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final l10n = context.l10n;
+    // ScoreLevel มาจาก lib/widgets/score_badge.dart
     final level = ScoreLevel.of(score);
     final (levelBg, levelFg) = level.container(scheme);
     final covered = keyPoints.where((p) => p.covered).toList();
     final missed = keyPoints.where((p) => !p.covered).toList();
     return AnimatedOpacity(
       opacity: stale ? 0.55 : 1,
+      // AppMotion มาจาก lib/core/motion.dart
       duration: AppMotion.reduced(context) ? Duration.zero : AppMotion.select,
       child: Card(
         margin: EdgeInsets.zero,
@@ -644,8 +671,10 @@ class _ResultCard extends StatelessWidget {
               Row(
                 children: [
                   if (score != null)
+                    // ScoreRing มาจาก lib/widgets/score_badge.dart
                     ScoreRing(score: score!)
                   else
+                    // ScoreBadge มาจาก lib/widgets/score_badge.dart
                     ScoreBadge(score: null, size: 72),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(

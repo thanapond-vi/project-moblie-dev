@@ -70,6 +70,7 @@ class _LaunchScreenState extends State<LaunchScreen>
     super.didChangeDependencies();
     if (_started) return;
     _started = true;
+    // AppMotion มาจาก lib/core/motion.dart
     if (AppMotion.reduced(context)) {
       // ไม่มีอนิเมชัน: แสดงโลโก้เต็มดวงสั้นๆ แล้วไปต่อ
       _controller.value = 1;
@@ -132,7 +133,9 @@ class _LaunchScreenState extends State<LaunchScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    // ReadingLampColors มาจาก lib/core/theme.dart
     final lampColors = ReadingLampColors.of(context);
+    // AppTheme มาจาก lib/core/theme.dart
     final wordmark = AppTheme.wordmarkLarge(context);
     return Scaffold(
       body: GestureDetector(
@@ -142,6 +145,7 @@ class _LaunchScreenState extends State<LaunchScreen>
           label: 'KEEP. ${context.l10n.tagline}',
           // ผู้ใช้โปรแกรมอ่านหน้าจอ/สวิตช์ข้ามได้เหมือนการแตะ
           button: true,
+          // context.l10n มาจาก lib/l10n/l10n.dart
           hint: context.l10n.skipIntro,
           onTap: _finish,
           excludeSemantics: true,
@@ -175,6 +179,7 @@ class _LaunchScreenState extends State<LaunchScreen>
                           ],
                         ),
                       ),
+                      // KeepLogo มาจาก lib/widgets/keep_logo.dart
                       child: KeepLogo(
                         size: 120,
                         lamp: lamp,
@@ -184,6 +189,7 @@ class _LaunchScreenState extends State<LaunchScreen>
                         bookShift: 14 * (1 - book),
                       ),
                     ),
+                    // AppSpacing มาจาก lib/core/spacing.dart
                     const SizedBox(height: AppSpacing.md),
                     Opacity(
                       opacity: word,

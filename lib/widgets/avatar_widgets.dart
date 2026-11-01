@@ -19,9 +19,11 @@ class UserAvatar extends StatelessWidget {
     this.radius = 24,
   });
 
+  // UserProfile มาจาก lib/models/user_profile.dart
   /// สร้างจากโปรไฟล์ (null = ยังโหลดไม่เสร็จ แสดงตัวละครเริ่มต้นไปก่อน)
   factory UserAvatar.of(UserProfile? profile, {double radius = 24}) =>
       UserAvatar(
+        // AvatarPreset มาจาก lib/models/user_profile.dart
         preset: profile?.preset ?? AvatarPreset.cat,
         photo: profile?.avatarBytes,
         radius: radius,
@@ -69,6 +71,7 @@ class AvatarPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // context.l10n มาจาก lib/l10n/l10n.dart
     final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final usingPhoto = photo != null;
@@ -77,6 +80,7 @@ class AvatarPicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.chooseAnimal, style: Theme.of(context).textTheme.titleSmall),
+        // AppSpacing มาจาก lib/core/spacing.dart
         const SizedBox(height: AppSpacing.sm),
         // แถวตัวละครเลื่อนแนวนอน: ตัวที่เลือกมีกรอบสีหลัก + ป้ายเครื่องหมายถูก (ไม่ใช้สีอย่างเดียว)
         SingleChildScrollView(
@@ -153,6 +157,7 @@ class _PresetChoice extends StatelessWidget {
       label: preset.name,
       excludeSemantics: true,
       onTap: onTap,
+      // SelectedScale มาจาก lib/widgets/motion_widgets.dart
       child: SelectedScale(
         selected: selected,
         child: InkWell(
@@ -162,6 +167,7 @@ class _PresetChoice extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               AnimatedContainer(
+                // AppMotion มาจาก lib/core/motion.dart
                 duration: AppMotion.reduced(context)
                     ? Duration.zero
                     : AppMotion.select,
@@ -216,6 +222,7 @@ Future<Uint8List?> pickProfilePhoto(
   } catch (_) {
     // เช่น ผู้ใช้ไม่อนุญาตให้เข้าถึงรูป/กล้อง หรือเครื่องไม่มีกล้อง (Simulator)
     if (context.mounted) {
+      // showMessage มาจาก lib/widgets/ui_helpers.dart
       showMessage(context, context.l10n.photoError, isError: true);
     }
     return null;

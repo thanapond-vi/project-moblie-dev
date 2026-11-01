@@ -7,6 +7,7 @@ import '../services/auth_service.dart';
 import '../widgets/ui_helpers.dart';
 import '../core/spacing.dart';
 import '../core/theme.dart';
+import '../widgets/google_mark.dart';
 import '../widgets/keep_logo.dart';
 
 /// หน้าจอ 1: Login / Register (ใช้หน้าเดียว สลับโหมดด้วยปุ่มด้านล่าง)
@@ -23,6 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  // AuthService มาจาก lib/services/auth_service.dart
   final _auth = AuthService();
 
   bool _isRegister = false;
@@ -56,8 +58,10 @@ class _AuthScreenState extends State<AuthScreen> {
         await _auth.signIn(email, password);
       }
       // 3) สำเร็จ: ไม่ต้อง navigate เอง AuthGate จะเห็น user ใหม่จาก stream แล้วพาไป Home
+      // AppException มาจาก lib/core/app_exception.dart
     } on AppException catch (e) {
       // หลัง await หน้าจออาจถูกปิดไปแล้ว ต้องเช็ก mounted ก่อนใช้ context
+      // showMessage มาจาก lib/widgets/ui_helpers.dart
       if (mounted) showMessage(context, e.message, isError: true);
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -72,6 +76,20 @@ class _AuthScreenState extends State<AuthScreen> {
     _formKey.currentState?.reset();
   }
 
+  /// เข้าสู่ระบบ/สมัครด้วย Google: บัญชีใหม่จะถูกสร้างให้อัตโนมัติ (แล้วไปหน้าตั้งค่าเริ่มต้นเหมือนสมัครปกติ)
+  /// สำเร็จแล้ว AuthGate เห็น user จาก stream แล้วพาไปหน้าแรกเอง ไม่ต้อง navigate
+  Future<void> _google() async {
+    FocusScope.of(context).unfocus();
+    setState(() => _isLoading = true);
+    try {
+      await _auth.signInWithGoogle(); // false = ผู้ใช้ยกเลิก ไม่ต้องแจ้งอะไร
+    } on AppException catch (e) {
+      if (mounted) showMessage(context, e.message, isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   /// ลืมรหัสผ่าน: กรอก/ยืนยันอีเมล → Firebase ส่งลิงก์ตั้งรหัสใหม่ไปที่อีเมลนั้น
   Future<void> _forgotPassword() async {
     final email = await showDialog<String>(
@@ -82,6 +100,7 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() => _sendingReset = true);
     try {
       await _auth.sendPasswordReset(email);
+      // context.l10n มาจาก lib/l10n/l10n.dart
       if (mounted) showMessage(context, context.l10n.resetSent(email.trim()));
     } on AppException catch (e) {
       if (mounted) showMessage(context, e.message, isError: true);
@@ -99,6 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
+            // AppSpacing มาจาก lib/core/spacing.dart
             padding: const EdgeInsets.all(AppSpacing.xl),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
@@ -110,6 +130,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   // letterSpacing เว้นท้ายตัวสุดท้ายด้วย → ดันด้านหน้าเท่ากัน ให้คำอยู่กลางจริง
                   Padding(
                     padding: EdgeInsetsDirectional.only(
+                      // AppTheme มาจาก lib/core/theme.dart
                       start: AppTheme.wordmarkLarge(context).letterSpacing ?? 0,
                     ),
                     child: Text(
@@ -153,6 +174,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   labelText: l10n.email,
                                   prefixIcon: const Icon(Icons.email_outlined),
                                 ),
+                                // Validators มาจาก lib/core/validators.dart
                                 validator: Validators.email,
                               ),
                               const SizedBox(height: AppSpacing.sm),
@@ -235,6 +257,53 @@ class _AuthScreenState extends State<AuthScreen> {
                                             : l10n.login,
                                       ),
                               ),
+                              const SizedBox(height: AppSpacing.md),
+                              // ── หรือ ──
+                              Row(
+                                children: [
+                                  const Expanded(child: Divider()),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.sm,
+                                    ),
+                                    child: Text(
+                                      l10n.orDivider,
+                                      style: theme.textTheme.labelMedium
+                                          ?.copyWith(
+                                            color: scheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ),
+                                  const Expanded(child: Divider()),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(52),
+                                  foregroundColor: scheme.onSurface,
+                                ),
+                                onPressed: _isLoading ? null : _google,
+                                // GoogleMark มาจาก lib/widgets/google_mark.dart
+                                icon: const GoogleMark(),
+                                label: Text(l10n.continueWithGoogle),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              // Apple: ยังไม่มีระบบจริง แสดงปุ่มไว้ก่อน แตะแล้วบอกว่าเร็วๆ นี้
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(52),
+                                  foregroundColor: scheme.onSurface,
+                                ),
+                                onPressed: _isLoading
+                                    ? null
+                                    : () => showMessage(
+                                        context,
+                                        l10n.appleComingSoon,
+                                      ),
+                                icon: const Icon(Icons.apple),
+                                label: Text(l10n.continueWithApple),
+                              ),
                               const SizedBox(height: AppSpacing.xs),
                               TextButton(
                                 onPressed: _isLoading ? null : _toggleMode,
@@ -288,6 +357,7 @@ class _Emblem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    // ReadingLampColors มาจาก lib/core/theme.dart
     final lamp = ReadingLampColors.of(context);
     return Container(
       width: 112,
@@ -311,6 +381,7 @@ class _Emblem extends StatelessWidget {
           color: scheme.surfaceContainerLow,
           border: Border.all(color: scheme.outlineVariant),
         ),
+        // KeepLogo มาจาก lib/widgets/keep_logo.dart
         child: const KeepLogo(size: 52, semanticLabel: 'KEEP'),
       ),
     );

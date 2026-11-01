@@ -21,6 +21,10 @@
 - Spacing: `AppSpacing` in `lib/core/spacing.dart` (base 4): xxs 4 · xs 8 · sm 12 · md 16 · lg 20 · xl 24 ·
   xxl 32 · fabClearance 96. Use `EdgeInsets.only` / `symmetric` / `EdgeInsetsDirectional.only`, never `fromLTRB`.
 
+## Code comments
+- At the first use in each `lib/` file of a project class or top-level function from another file, add
+  `// X มาจาก lib/path/file.dart`. Not for Flutter/package symbols, generated l10n, or `test/`.
+
 ## Hierarchy
 - System font (Thai/Chinese render well); sizes, line heights and tracking come from Stitch, in px:
   displayLarge 40/52 · displayMedium 32/42 · displaySmall 28/34 (recall-stat) · headlineMedium 26/34 ·
@@ -91,8 +95,38 @@
   first lights, 2 dips, ≤ 2 flashes/s, amber halo follows the beam), then KEEP + tagline fade up.
   Sound `assets/sounds/lamp_flicker.wav` (synthesised hum + clicks, ~-10 dBFS) starts with the flicker,
   respects the silent switch and mixes with other audio; off via Settings → Launch sound.
-  Reduce Motion: static logo for 0.9 s, no flicker, no sound. Before login the screen follows the system
-  theme; native splash background is paper / charcoal (no white flash).
+  Reduce Motion: static logo for 0.9 s, no flicker, no sound. Native splash background is paper /
+  charcoal (no white flash).
+- Theme mode (`KeepApp`): signed out → follows the device (launch + login + onboarding all match);
+  signed in → the user's Dark Mode setting.
+- App icon: `KeepLogo` painted on charcoal with a 20 % amber glow (`assets/icon/`, generated with
+  `dart run flutter_launcher_icons`; Android adaptive foreground has extra padding).
+- Stats tab (`StatsScreen` / `StatsBody`, data from `PeriodStats`): range segmented 7 / 30 days / all;
+  3 `StatTile`s with a short "↑ n" caption (full sentence in semantics); then `ChartCard`s: reading
+  time (bars, focal), recall scores (line + dashed 60/80 thresholds), 12-week reading calendar, topics.
+  Charts (`lib/widgets/charts.dart`, CustomPainter): one hue = primary; calendar intensity = primary
+  alpha 0.35/0.6/0.8/1 with a Less→More legend; text in text tokens, never the series color; bars have
+  4 px rounded tops, empty days a 2 px stub; line 2 px, dots 8 px with a 2 px surface ring; recessive
+  outlineVariant grid. Tap → value in a fixed line above the plot. Every card: semantics summary +
+  table toggle. "All" range over 60 days switches to weekly bars. Grow-in animation respects
+  Reduce Motion.
+- Review tab (Leitner, `ReviewSchedule`): 5 boxes reviewed every 1 / 3 / 7 / 14 / 30 days; a new
+  log is due the day after reading. Forgot → box 1, Hard → same box, Good → +1, Easy → +2.
+  Firestore fields on `study_logs`: reviewBox, nextReviewAt, lastReviewedAt, reviewsTotal,
+  reviewsPassed (server increments), recallQuestion. Profile "review success %" = passed ÷ total.
+  Tab: hero "N articles to review" + Review button (focal), memory boxes as 5 `StatTile`s, due list
+  (overdue = amber + clock icon), coming up (next 5). Session: title → recall prompt (amber start
+  bar, stored AI question or a generic one) → optional notes (not saved) → reveal key points (core
+  first; old logs show the earlier summary) → 2×2 rating buttons, each showing "in N days"; Good is
+  the filled one. Sub-labels take the button's own text color.
+- Delete account: a red text button under Logout (secondary to Logout, red = dangerous) → alert
+  dialog with warning icon, what gets deleted, password field (errors shown inline), red filled
+  "Delete forever". `AccountService` order: re-auth → users/{uid} → study_logs (batches of 400) →
+  Firebase Auth user → this account's local keys; stops at the first failure.
+- Sign in buttons under the form: "── or ──" divider, then outlined "Continue with Google" (GoogleMark:
+  the 4-colour G, brand colours are the one allowed colour-literal exception) and "Continue with Apple"
+  (Icons.apple, placeholder: snackbar "coming soon"). Google uses Firebase `signInWithProvider`
+  (no google_sign_in package: its iOS SDK conflicts with Firebase iOS 13); iOS URL scheme = Encoded App ID.
 - Email: `EmailText` truncates only the part before `@`, keeps the domain, full value in tooltip and semantics.
 
 ## Motion and accessibility

@@ -5,6 +5,7 @@ import '../models/content_language.dart';
 
 /// ภาษา 3 ค่าที่รอใช้หลังรีสตาร์ต
 typedef PendingLanguages = ({
+  // ContentLanguage มาจาก lib/models/content_language.dart
   ContentLanguage app,
   ContentLanguage article,
   ContentLanguage? tts,

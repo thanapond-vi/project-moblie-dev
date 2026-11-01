@@ -932,4 +932,276 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get noData => 'ยังไม่มีข้อมูล';
+
+  @override
+  String get range7 => '7 วัน';
+
+  @override
+  String get range30 => '30 วัน';
+
+  @override
+  String get rangeAll => 'ทั้งหมด';
+
+  @override
+  String get statsMinutesTitle => 'เวลาอ่าน';
+
+  @override
+  String get statsScoresTitle => 'คะแนนการจำ';
+
+  @override
+  String get statsCalendarTitle => 'ปฏิทินการอ่าน';
+
+  @override
+  String get statsTopicsTitle => 'หมวดที่อ่าน';
+
+  @override
+  String get statsEmpty => 'ช่วงนี้ยังไม่ได้อ่านเลย ลองสุ่มบทความจากแท็บคลังดู';
+
+  @override
+  String changeUp(String value) {
+    return '↑ $value จากช่วงก่อน';
+  }
+
+  @override
+  String changeDown(String value) {
+    return '↓ $value จากช่วงก่อน';
+  }
+
+  @override
+  String get changeSame => 'เท่ากับช่วงก่อน';
+
+  @override
+  String get showTable => 'ดูเป็นตาราง';
+
+  @override
+  String get showChart => 'ดูเป็นกราฟ';
+
+  @override
+  String get chartTapHint => 'แตะกราฟเพื่อดูค่า';
+
+  @override
+  String get legendLess => 'น้อย';
+
+  @override
+  String get legendMore => 'มาก';
+
+  @override
+  String weekOf(String date) {
+    return 'สัปดาห์ของ $date';
+  }
+
+  @override
+  String minutesSummary(int total, int max, String day) {
+    return 'รวม $total นาที มากที่สุด $max นาที เมื่อ $day';
+  }
+
+  @override
+  String scoresSummary(int count, int latest, int average) {
+    return 'มีคะแนน $count บทความ ล่าสุด $latest เฉลี่ย $average';
+  }
+
+  @override
+  String calendarSummary(int days, int longest) {
+    return 'อ่าน $days วันใน 12 สัปดาห์ที่ผ่านมา ติดกันยาวที่สุด $longest วัน';
+  }
+
+  @override
+  String topicsSummary(String topic, int count) {
+    return 'อ่านมากที่สุด: $topic $count บทความ';
+  }
+
+  @override
+  String longestStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ติดกันยาวที่สุด $count วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String topicValue(int count, int score) {
+    return '$count · เฉลี่ย $score';
+  }
+
+  @override
+  String get otherTopics => 'อื่นๆ';
+
+  @override
+  String get noScoresYet => 'ช่วงนี้ยังไม่มีคะแนน';
+
+  @override
+  String reviewDueTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ทบทวนวันนี้ $count เรื่อง',
+      zero: 'วันนี้ไม่มีเรื่องต้องทบทวน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDueSub => 'นึกให้ออกก่อน แล้วค่อยดูประเด็นสำคัญ';
+
+  @override
+  String reviewNextOn(String date) {
+    return 'ทบทวนครั้งถัดไป: $date';
+  }
+
+  @override
+  String get reviewBoxesTitle => 'กล่องความจำ';
+
+  @override
+  String get reviewBoxesHint =>
+      'จำได้ = บทความเลื่อนไปกล่องที่เว้นนานขึ้น ลืม = กลับไปกล่อง 1';
+
+  @override
+  String boxLabel(int box) {
+    return 'กล่อง $box';
+  }
+
+  @override
+  String everyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ทุก $count วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dueToday => 'ถึงกำหนดวันนี้';
+
+  @override
+  String overdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'เลยกำหนด $count วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get comingUp => 'รอบถัดไป';
+
+  @override
+  String dueOn(String date) {
+    return 'ครบกำหนด $date';
+  }
+
+  @override
+  String get startReview => 'ทบทวน';
+
+  @override
+  String get reviewEmptyAll =>
+      'อ่านบทความแล้วบันทึกคำสรุปก่อน บทความจะถึงรอบทบทวนในวันถัดไป';
+
+  @override
+  String reviewAllDone(String date) {
+    return 'ทบทวนครบแล้ว กลับมาอีกครั้ง $date';
+  }
+
+  @override
+  String get recallPromptGeneric =>
+      'จำอะไรเกี่ยวกับบทความนี้ได้บ้าง? เริ่มจากใจความหลักก่อน';
+
+  @override
+  String get recallJotHint => 'จดสิ่งที่จำได้ (ไม่บังคับ ไม่บันทึก)';
+
+  @override
+  String get reveal => 'เฉลยประเด็นสำคัญ';
+
+  @override
+  String get reviewYourSummary => 'คำสรุปเดิมของคุณ';
+
+  @override
+  String get rateTitle => 'จำได้แค่ไหน?';
+
+  @override
+  String get rateAgain => 'ลืม';
+
+  @override
+  String get rateHard => 'ยาก';
+
+  @override
+  String get rateGood => 'ดี';
+
+  @override
+  String get rateEasy => 'ง่าย';
+
+  @override
+  String nextInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'อีก $count วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ทบทวนอีกครั้งในอีก $count วัน',
+      one: 'ทบทวนอีกครั้งพรุ่งนี้',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSuccessCaption(int passed, int total) {
+    return 'จำได้ $passed จาก $total ครั้ง';
+  }
+
+  @override
+  String get deleteAccount => 'ลบบัญชี';
+
+  @override
+  String get deleteAccountTitle => 'ลบบัญชีของคุณ?';
+
+  @override
+  String get deleteAccountBody =>
+      'จะลบประวัติการอ่าน คำสรุป ความคืบหน้าการทบทวน และโปรไฟล์ทั้งหมดอย่างถาวร และกู้คืนไม่ได้';
+
+  @override
+  String get deleteAccountPassword => 'ใส่รหัสผ่านเพื่อยืนยัน';
+
+  @override
+  String get deleteAccountConfirm => 'ลบถาวร';
+
+  @override
+  String get accountDeleted => 'ลบบัญชีเรียบร้อยแล้ว';
+
+  @override
+  String get continueWithGoogle => 'ดำเนินการต่อด้วย Google';
+
+  @override
+  String get orDivider => 'หรือ';
+
+  @override
+  String get errGoogleSetup =>
+      'ยังไม่ได้ตั้งค่าการเข้าสู่ระบบด้วย Google สำหรับแอปนี้';
+
+  @override
+  String get errGoogleFailed => 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ ลองอีกครั้ง';
+
+  @override
+  String get errAccountOtherProvider =>
+      'อีเมลนี้สมัครด้วยวิธีอื่นไว้แล้ว ลองเข้าสู่ระบบด้วยรหัสผ่าน';
+
+  @override
+  String get deleteAccountGoogle =>
+      'ระบบจะให้เข้าสู่ระบบ Google อีกครั้งเพื่อยืนยัน';
+
+  @override
+  String get continueWithApple => 'ดำเนินการต่อด้วย Apple';
+
+  @override
+  String get appleComingSoon => 'เข้าสู่ระบบด้วย Apple จะเปิดให้ใช้เร็วๆ นี้';
 }

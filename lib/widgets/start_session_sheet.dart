@@ -8,6 +8,7 @@ import '../services/sources/article_source.dart';
 import 'motion_widgets.dart';
 import '../core/spacing.dart';
 
+// ReadingTopic มาจาก lib/models/reading_topic.dart
 /// แผ่นเลือกหมวดก่อนสุ่มบทความ: สุ่มทุกหมวด / หมวดยอดฮิต 5 หมวด / พิมพ์ค้นหัวข้อเอง
 /// คืนค่า null ถ้าผู้ใช้ปิดแผ่นโดยไม่กดเริ่ม
 Future<ReadingTopic?> showStartSessionSheet(BuildContext context) {
@@ -28,6 +29,7 @@ class _StartSessionSheet extends StatefulWidget {
 class _StartSessionSheetState extends State<_StartSessionSheet> {
   final _searchController = TextEditingController();
 
+  // ArticleTag มาจาก lib/models/article_tag.dart
   /// null = สุ่มทุกหมวด
   ArticleTag? _preset;
 
@@ -46,9 +48,12 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // context.l10n มาจาก lib/l10n/l10n.dart
     final l10n = context.l10n;
     final theme = Theme.of(context);
+    // SettingsService มาจาก lib/services/settings_service.dart
     final settings = SettingsService.instance;
+    // ArticleSources มาจาก lib/services/sources/article_source.dart
     final source = ArticleSources.byId(settings.sourceId.value);
     final searching = _searchController.text.trim().isNotEmpty;
 
@@ -56,6 +61,7 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
       child: Padding(
         // ดันเนื้อหาขึ้นเท่าความสูงคีย์บอร์ด
         padding: EdgeInsets.only(
+          // AppSpacing มาจาก lib/core/spacing.dart
           left: AppSpacing.lg,
           right: AppSpacing.lg,
           bottom: AppSpacing.md + MediaQuery.viewInsetsOf(context).bottom,
@@ -107,7 +113,9 @@ class _StartSessionSheetState extends State<_StartSessionSheet> {
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
               children: [
+                // EntranceFade มาจาก lib/widgets/motion_widgets.dart
                 EntranceFade(
+                  // SelectedScale มาจาก lib/widgets/motion_widgets.dart
                   child: SelectedScale(
                     selected: !searching && _preset == null,
                     child: ChoiceChip(

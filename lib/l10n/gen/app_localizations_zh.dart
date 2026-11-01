@@ -908,4 +908,271 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noData => '暂无数据';
+
+  @override
+  String get range7 => '7 天';
+
+  @override
+  String get range30 => '30 天';
+
+  @override
+  String get rangeAll => '全部';
+
+  @override
+  String get statsMinutesTitle => '阅读时间';
+
+  @override
+  String get statsScoresTitle => '回忆得分';
+
+  @override
+  String get statsCalendarTitle => '阅读日历';
+
+  @override
+  String get statsTopicsTitle => '阅读主题';
+
+  @override
+  String get statsEmpty => '这段时间还没有阅读。去书库标签随机读一篇吧。';
+
+  @override
+  String changeUp(String value) {
+    return '比上期 ↑ $value';
+  }
+
+  @override
+  String changeDown(String value) {
+    return '比上期 ↓ $value';
+  }
+
+  @override
+  String get changeSame => '与上期持平';
+
+  @override
+  String get showTable => '以表格显示';
+
+  @override
+  String get showChart => '以图表显示';
+
+  @override
+  String get chartTapHint => '点按图表查看数值';
+
+  @override
+  String get legendLess => '少';
+
+  @override
+  String get legendMore => '多';
+
+  @override
+  String weekOf(String date) {
+    return '$date 那周';
+  }
+
+  @override
+  String minutesSummary(int total, int max, String day) {
+    return '共 $total 分钟，最多 $max 分钟（$day）。';
+  }
+
+  @override
+  String scoresSummary(int count, int latest, int average) {
+    return '$count 篇有得分，最新 $latest，平均 $average。';
+  }
+
+  @override
+  String calendarSummary(int days, int longest) {
+    return '过去 12 周读了 $days 天，最长连续 $longest 天。';
+  }
+
+  @override
+  String topicsSummary(String topic, int count) {
+    return '读得最多：$topic，$count 篇。';
+  }
+
+  @override
+  String longestStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '最长连续 $count 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String topicValue(int count, int score) {
+    return '$count · 平均 $score';
+  }
+
+  @override
+  String get otherTopics => '其他';
+
+  @override
+  String get noScoresYet => '这段时间还没有得分';
+
+  @override
+  String reviewDueTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '今天要复习 $count 篇',
+      zero: '今天没有要复习的',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewDueSub => '先凭记忆回想，再看要点。';
+
+  @override
+  String reviewNextOn(String date) {
+    return '下次复习：$date';
+  }
+
+  @override
+  String get reviewBoxesTitle => '记忆盒';
+
+  @override
+  String get reviewBoxesHint => '记得就移到间隔更长的盒子，忘了就回到第 1 盒。';
+
+  @override
+  String boxLabel(int box) {
+    return '第 $box 盒';
+  }
+
+  @override
+  String everyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 天',
+      one: '每天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dueToday => '今天到期';
+
+  @override
+  String overdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '逾期 $count 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get comingUp => '即将复习';
+
+  @override
+  String dueOn(String date) {
+    return '$date 到期';
+  }
+
+  @override
+  String get startReview => '复习';
+
+  @override
+  String get reviewEmptyAll => '先读一篇文章并保存总结，第二天就可以复习了。';
+
+  @override
+  String reviewAllDone(String date) {
+    return '都复习完了，$date 再来。';
+  }
+
+  @override
+  String get recallPromptGeneric => '关于这篇文章你还记得什么？先从主旨想起。';
+
+  @override
+  String get recallJotHint => '写下你记得的内容（可选，不保存）';
+
+  @override
+  String get reveal => '显示要点';
+
+  @override
+  String get reviewYourSummary => '你之前的总结';
+
+  @override
+  String get rateTitle => '你记得多少？';
+
+  @override
+  String get rateAgain => '忘了';
+
+  @override
+  String get rateHard => '困难';
+
+  @override
+  String get rateGood => '记得';
+
+  @override
+  String get rateEasy => '简单';
+
+  @override
+  String nextInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 天后',
+      one: '1 天后',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 天后再复习',
+      one: '明天再复习',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSuccessCaption(int passed, int total) {
+    return '$total 次中记得 $passed 次';
+  }
+
+  @override
+  String get deleteAccount => '删除账号';
+
+  @override
+  String get deleteAccountTitle => '删除你的账号？';
+
+  @override
+  String get deleteAccountBody => '这将永久删除你的阅读记录、总结、复习进度和个人资料，且无法恢复。';
+
+  @override
+  String get deleteAccountPassword => '输入密码以确认';
+
+  @override
+  String get deleteAccountConfirm => '永久删除';
+
+  @override
+  String get accountDeleted => '账号已删除';
+
+  @override
+  String get continueWithGoogle => '使用 Google 继续';
+
+  @override
+  String get orDivider => '或';
+
+  @override
+  String get errGoogleSetup => '此应用尚未设置 Google 登录。';
+
+  @override
+  String get errGoogleFailed => 'Google 登录失败，请重试。';
+
+  @override
+  String get errAccountOtherProvider => '此邮箱已使用其他登录方式，请用密码登录。';
+
+  @override
+  String get deleteAccountGoogle => '需要再次登录 Google 以确认。';
+
+  @override
+  String get continueWithApple => '通过 Apple 继续';
+
+  @override
+  String get appleComingSoon => 'Apple 登录即将推出';
 }

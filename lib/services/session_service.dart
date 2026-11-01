@@ -15,6 +15,7 @@ class SessionService {
   SessionService._();
   static final SessionService instance = SessionService._();
 
+  // ReadingSession มาจาก lib/models/reading_session.dart
   final ValueNotifier<ReadingSession?> current = ValueNotifier(null);
   String? _uid;
 
@@ -24,6 +25,7 @@ class SessionService {
   Future<void> load(String uid) async {
     _uid = uid;
     try {
+      // SettingsService มาจาก lib/services/settings_service.dart
       final prefs = await SettingsService.instance.prefs;
       final raw = prefs.getString(_key);
       current.value = raw == null

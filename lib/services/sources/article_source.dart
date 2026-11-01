@@ -15,9 +15,11 @@ abstract class ArticleSource {
   /// ชื่อที่แสดงในแอป
   String get name;
 
+  // ContentLanguage มาจาก lib/models/content_language.dart
   /// ภาษาที่แหล่งนี้รองรับ
   Set<ContentLanguage> get languages;
 
+  // Article มาจาก lib/models/article.dart
   /// สุ่มบทความ 1 เรื่อง
   /// - [topic]: หมวดยอดฮิต / คำค้นเอง / สุ่มทุกหมวด
   /// - [excludeKeys]: Article.readKey ของบทความที่ผู้ใช้อ่านไปแล้ว (ห้ามสุ่มซ้ำ)
@@ -25,6 +27,7 @@ abstract class ArticleSource {
   /// throw [TopicExhaustedException] ถ้าบทความในหมวดนั้นถูกอ่านครบหมดแล้ว
   Future<Article> fetchRandomArticle({
     required ContentLanguage language,
+    // ReadingTopic มาจาก lib/models/reading_topic.dart
     required ReadingTopic topic,
     required Set<String> excludeKeys,
   });
@@ -39,6 +42,7 @@ class TopicExhaustedException implements Exception {
 class ArticleSources {
   ArticleSources._();
 
+  // WikipediaSource มาจาก lib/services/sources/wikipedia_source.dart
   static final List<ArticleSource> all = [WikipediaSource()];
 
   static ArticleSource byId(String id) =>

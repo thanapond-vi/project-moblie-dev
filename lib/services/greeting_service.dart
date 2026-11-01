@@ -20,6 +20,7 @@ class GreetingService {
   /// null = ยังไม่มี (หน้าจอแสดงข้อความสำรอง)
   final ValueNotifier<String?> text = ValueNotifier(null);
 
+  // SlmService มาจาก lib/services/slm_service.dart
   final _slm = SlmService();
   String? _loadingFor;
 
@@ -30,6 +31,7 @@ class GreetingService {
 
   /// เรียกตอนเข้าหน้าแรก และเมื่อเปลี่ยนภาษาแอป
   Future<void> load() async {
+    // SettingsService มาจาก lib/services/settings_service.dart
     final language = SettingsService.instance.appLanguage.value;
     final cacheId = '${_today()}|${language.code}';
     if (_loadingFor == cacheId) return; // กำลังโหลดชุดนี้อยู่แล้ว
@@ -66,6 +68,7 @@ class GreetingService {
     }
   }
 
+  // AppLocalizations มาจาก lib/l10n/gen/app_localizations.dart
   /// ข้อความที่แสดงจริง: ของ AI ถ้ามี ไม่งั้นใช้ข้อความสำรองตามภาษาแอป
   static String display(String? fromAi, AppLocalizations l10n) =>
       fromAi ?? l10n.greetingFallback;

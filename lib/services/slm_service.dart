@@ -27,12 +27,14 @@ class SlmService {
 
   static const _timeout = Duration(seconds: 30);
 
+  // ContentLanguage มาจาก lib/models/content_language.dart
   /// prompt เขียนเป็นภาษาอังกฤษ (โมเดลทำตามคำสั่งภาษาอังกฤษได้แม่นที่สุด)
   /// แล้วบอกให้ตอบเป็นภาษาของแอปที่ผู้ใช้เลือก
   ///
   /// ไม่ให้โมเดลเดาคะแนนเอง: ให้ไล่ประเด็นหลักของบทความทีละข้อ ว่าคำสรุปครอบคลุมไหม
   /// พร้อมยกคำจากคำสรุปมาเป็นหลักฐาน แล้วแอปคำนวณคะแนนเองใน [scoreOf]
   static String _gradePrompt(ContentLanguage language) {
+    // ArticleTag มาจาก lib/models/article_tag.dart
     final tagIds = ArticleTag.values.map((t) => t.id).join(', ');
     return '''
 You check a learner's summary of an article, point by point.
@@ -96,6 +98,7 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
       .replaceAll(RegExp(r'\s+'), ' ')
       .replaceAll(RegExp(r'''^[\s"'.,;:!?…]+|[\s"'.,;:!?…]+$'''), '');
 
+  // AiEvaluation มาจาก lib/models/ai_evaluation.dart
   Future<AiEvaluation> evaluate({
     required ContentLanguage language,
     required String articleTitle,
@@ -141,6 +144,8 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
         .first
         .trim();
     if (text.isEmpty || text.length > 120) {
+      // context.l10n มาจาก lib/l10n/l10n.dart
+      // AppException มาจาก lib/core/app_exception.dart
       throw AppException(tr.errAiBadFormat);
     }
     return text;
@@ -197,6 +202,7 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
     required bool json,
     required double temperature,
   }) async {
+    // AppConfig มาจาก lib/core/config.dart
     final apiKey = AppConfig.groqApiKey;
     if (apiKey.isEmpty) throw AppException(tr.errAiNotConfigured);
 
@@ -299,6 +305,7 @@ Write point, accuracyIssues and aiFeedback in ${language.aiLanguage}; keep evide
       feedback: feedback.isEmpty ? tr.aiNoFeedback : feedback,
       model: model,
       tags: tags,
+      // KeyPoint มาจาก lib/models/key_point.dart
       keyPoints: KeyPoint.listFrom(json['keyPoints'] as List?),
       accuracyIssues: [
         for (final i in (json['accuracyIssues'] as List?) ?? const [])

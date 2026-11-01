@@ -606,5 +606,227 @@
   },
   "timeAlmostUp": "Almost time",
   "skipIntro": "Skip intro",
-  "noData": "no data yet"
+  "noData": "no data yet",
+  "range7": "7 days",
+  "range30": "30 days",
+  "rangeAll": "All time",
+  "statsMinutesTitle": "Reading time",
+  "statsScoresTitle": "Recall scores",
+  "statsCalendarTitle": "Reading calendar",
+  "statsTopicsTitle": "Topics you read",
+  "statsEmpty": "Nothing read in this period yet. Pick a random article from the Library tab.",
+  "changeUp": "↑ {value} from last period",
+  "@changeUp": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDown": "↓ {value} from last period",
+  "@changeDown": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "changeSame": "Same as last period",
+  "showTable": "Show as table",
+  "showChart": "Show as chart",
+  "chartTapHint": "Tap the chart to see values",
+  "legendLess": "Less",
+  "legendMore": "More",
+  "weekOf": "Week of {date}",
+  "@weekOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesSummary": "{total} min in total. Most: {max} min, {day}.",
+  "@minutesSummary": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "scoresSummary": "{count} scored articles. Latest {latest}, average {average}.",
+  "@scoresSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "latest": {
+        "type": "int"
+      },
+      "average": {
+        "type": "int"
+      }
+    }
+  },
+  "calendarSummary": "Read on {days} days in the last 12 weeks. Longest streak {longest} days.",
+  "@calendarSummary": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "longest": {
+        "type": "int"
+      }
+    }
+  },
+  "topicsSummary": "Most read: {topic}, {count} articles.",
+  "@topicsSummary": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "longestStreak": "{count, plural, =1{Longest streak: 1 day} other{Longest streak: {count} days}}",
+  "@longestStreak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "topicValue": "{count} · avg {score}",
+  "@topicValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "otherTopics": "Other",
+  "noScoresYet": "No scores in this period yet",
+  "reviewDueTitle": "{count, plural, =0{Nothing to review today} =1{1 article to review} other{{count} articles to review}}",
+  "@reviewDueTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewDueSub": "Recall it first, then check the key points.",
+  "reviewNextOn": "Next review: {date}",
+  "@reviewNextOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewBoxesTitle": "Memory boxes",
+  "reviewBoxesHint": "Remember it and the article moves to a box with a longer gap. Forget it and it goes back to box 1.",
+  "boxLabel": "Box {box}",
+  "@boxLabel": {
+    "placeholders": {
+      "box": {
+        "type": "int"
+      }
+    }
+  },
+  "everyDays": "{count, plural, =1{every day} other{every {count} days}}",
+  "@everyDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dueToday": "Due today",
+  "overdueDays": "{count, plural, =1{1 day overdue} other{{count} days overdue}}",
+  "@overdueDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "comingUp": "Coming up",
+  "dueOn": "Due {date}",
+  "@dueOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "startReview": "Review",
+  "reviewEmptyAll": "Read an article and save your summary first. It comes up for review the next day.",
+  "reviewAllDone": "All caught up. Come back {date}.",
+  "@reviewAllDone": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recallPromptGeneric": "What do you remember about this article? Start with the main idea.",
+  "recallJotHint": "Jot down what you remember (optional, not saved)",
+  "reveal": "Reveal key points",
+  "reviewYourSummary": "Your earlier summary",
+  "rateTitle": "How well did you remember?",
+  "rateAgain": "Forgot",
+  "rateHard": "Hard",
+  "rateGood": "Good",
+  "rateEasy": "Easy",
+  "nextInDays": "{count, plural, =1{in 1 day} other{in {count} days}}",
+  "@nextInDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSaved": "{count, plural, =1{Next review tomorrow} other{Next review in {count} days}}",
+  "@reviewSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSuccessCaption": "{passed} of {total} reviews remembered",
+  "@reviewSuccessCaption": {
+    "placeholders": {
+      "passed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete your account?",
+  "deleteAccountBody": "This permanently deletes your reading history, summaries, review progress and profile. It can't be undone.",
+  "deleteAccountPassword": "Enter your password to confirm",
+  "deleteAccountConfirm": "Delete forever",
+  "accountDeleted": "Your account has been deleted",
+  "continueWithGoogle": "Continue with Google",
+  "orDivider": "or",
+  "errGoogleSetup": "Google sign-in isn't set up for this app yet.",
+  "errGoogleFailed": "Couldn't sign in with Google. Please try again.",
+  "errAccountOtherProvider": "This email already uses a different sign-in method. Log in with your password.",
+  "deleteAccountGoogle": "You'll be asked to sign in with Google again to confirm.",
+  "continueWithApple": "Continue with Apple",
+  "appleComingSoon": "Sign in with Apple is coming soon"
 }

@@ -27,9 +27,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
-  String get continueLabel => 'Continue';
-
-  @override
   String minutesValue(int count) {
     return '$count min';
   }
@@ -250,9 +247,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get randomArticle => 'Random article';
 
   @override
-  String get finishCurrentFirst => 'Finish the current one';
-
-  @override
   String get sessionLockedMessage =>
       'You have an article in progress. Finish its summary before starting a new one.';
 
@@ -302,13 +296,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statTotalTime => 'Total reading';
 
   @override
-  String get unitArticles => 'articles';
-
-  @override
   String get unitMinutes => 'min';
-
-  @override
-  String get statAllTime => 'All time';
 
   @override
   String get emptyTitle => 'No reading history yet';
@@ -340,9 +328,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readingTitle => 'Reading';
-
-  @override
-  String get searchMore => 'Search for more';
 
   @override
   String get pauseForLater => 'Pause and read later';
@@ -419,9 +404,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openWikipedia => 'Open the Wikipedia page';
 
   @override
-  String get openWikipediaSub => 'See images, tables and references';
-
-  @override
   String get writeSummaryTitle => 'Write summary';
 
   @override
@@ -479,11 +461,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notEvaluatedYet => 'Not evaluated yet';
-
-  @override
-  String scoreOutOf(int score) {
-    return '$score / 100';
-  }
 
   @override
   String evaluatedBy(String model) {
@@ -556,11 +533,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTopicHint => 'e.g. space, coffee, Roman Empire';
 
   @override
-  String readingFrom(String source, String language) {
-    return 'From $source · $language';
-  }
-
-  @override
   String get startReading => 'Start reading';
 
   @override
@@ -601,15 +573,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Works on a real device (the Simulator has no camera)';
 
   @override
-  String get removePhoto => 'Remove my photo';
-
-  @override
   String photoUpdated(int size) {
     return 'Profile picture updated ($size KB)';
   }
-
-  @override
-  String get photoRemoved => 'Your photo was removed';
 
   @override
   String get photoError =>
@@ -719,14 +685,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navStats => 'Stats';
-
-  @override
-  String get reviewComingSoonBody =>
-      'Spaced review will bring back the articles you are about to forget.';
-
-  @override
-  String get statsComingSoonBody =>
-      'Charts of your reading time and recall scores will live here.';
 
   @override
   String streakDays(int count) {
@@ -935,9 +893,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupStep2Title => 'How do you like to read?';
 
   @override
-  String get selectedLabel => 'Selected';
-
-  @override
   String ttsSpeed(String rate) {
     return 'Reading speed $rate×, tap to change';
   }
@@ -1067,11 +1022,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewDueSub => 'Recall it first, then check the key points.';
 
   @override
-  String reviewNextOn(String date) {
-    return 'Next review: $date';
-  }
-
-  @override
   String get reviewBoxesTitle => 'Memory boxes';
 
   @override
@@ -1177,11 +1127,6 @@ class AppLocalizationsEn extends AppLocalizations {
       one: 'Next review tomorrow',
     );
     return '$_temp0';
-  }
-
-  @override
-  String reviewSuccessCaption(int passed, int total) {
-    return '$passed of $total reviews remembered';
   }
 
   @override

@@ -272,7 +272,7 @@ flutter run
 
 - แก้ข้อความ/เพิ่มภาษา: แก้ไฟล์ใน `lib/l10n/arb/` แล้ว `flutter gen-l10n`
 - deploy Security Rules: `firebase deploy --only firestore:rules`
-- unit/widget test (ไม่ต้องใช้เน็ต): `flutter test test/widget_test.dart test/features_test.dart`
+- unit/widget test (ไม่ต้องใช้เน็ต): `flutter test`
 - API จริง: `flutter test test/live` — ตัวเลือก `LANG_CODE=en|zh|th`, `TOPIC=science` หรือ `TOPIC=coffee`, `MODEL=...` (กดถี่ๆ Wikipedia จะตอบ 429)
 
 ## 16. Checklist ของวิชา

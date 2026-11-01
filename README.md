@@ -135,10 +135,10 @@ lib/
 ├── models/                   Article, StudyLog, ReadingSession, ContentLanguage, ArticleTag, UserProfile
 ├── services/                 slm_service (Groq), sources/wikipedia_source, study_log_repository (Firestore),
 │                             session_service, settings_service, tts_service, profile/auth/greeting
-├── screens/                  auth · onboarding · home · reading · summary · profile
-├── widgets/                  reading_lamp, animated_counter (การ์ดสถิติ), score_badge, start_session_sheet
+├── screens/                  launch · auth · onboarding · app_shell · home · reading · summary · review · stats · profile
+├── widgets/                  keep_logo, capsule_nav_bar, charts, stat_tile, score_badge, reading_lamp, start_session_sheet
 └── l10n/arb/                 app_en.arb · app_th.arb · app_zh.arb
-test/                         unit + widget tests (ออฟไลน์), test/live = เรียก API จริง
+test/                         core · models · services · widgets · screens (ออฟไลน์), live = เรียก API จริง
 docs/                         architecture.md · workflow.md · plan.md · images/
 firestore.rules               ผู้ใช้อ่าน/เขียนได้เฉพาะข้อมูลของตัวเอง
 .interface-design/system.md   ระบบดีไซน์: สี, ตัวอักษร, ระยะห่าง, component

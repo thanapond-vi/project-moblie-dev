@@ -6,7 +6,6 @@
   "save": "Save",
   "discard": "Discard",
   "delete": "Delete",
-  "continueLabel": "Continue",
   "minutesValue": "{count} min",
   "@minutesValue": {
     "placeholders": {
@@ -165,7 +164,6 @@
   "greetingFallback": "What will you learn today?",
   "profileSettingsTooltip": "Profile & Settings",
   "randomArticle": "Random article",
-  "finishCurrentFirst": "Finish the current one",
   "sessionLockedMessage": "You have an article in progress. Finish its summary before starting a new one.",
   "sessionReading": "Reading · Paused",
   "sessionSummarizing": "Finished · Awaiting summary",
@@ -201,9 +199,7 @@
   "statRead": "Articles read",
   "statAvgScore": "Average score",
   "statTotalTime": "Total reading",
-  "unitArticles": "articles",
   "unitMinutes": "min",
-  "statAllTime": "All time",
   "emptyTitle": "No reading history yet",
   "emptyBody": "Tap \"Random article\" to start, then summarize it from memory.",
   "deleteLogTitle": "Delete this entry?",
@@ -233,7 +229,6 @@
     }
   },
   "readingTitle": "Reading",
-  "searchMore": "Search for more",
   "pauseForLater": "Pause and read later",
   "pausedMessage": "Reading paused. Tap the card on the home screen to continue.",
   "timeUpTitle": "Time's up",
@@ -283,7 +278,6 @@
   "linkError": "Could not open the link",
   "searchGoogle": "Search on Google",
   "openWikipedia": "Open the Wikipedia page",
-  "openWikipediaSub": "See images, tables and references",
   "writeSummaryTitle": "Write summary",
   "editSummaryTitle": "Edit summary",
   "recallHint": "Summarize the key points from memory — no peeking at the article.",
@@ -318,14 +312,6 @@
   "staleScore": "This score is for your previous text. Evaluate again to update it.",
   "scoreLabel": "Understanding score",
   "notEvaluatedYet": "Not evaluated yet",
-  "scoreOutOf": "{score} / 100",
-  "@scoreOutOf": {
-    "placeholders": {
-      "score": {
-        "type": "int"
-      }
-    }
-  },
   "evaluatedBy": "Evaluated by Groq · {model}",
   "@evaluatedBy": {
     "placeholders": {
@@ -355,17 +341,6 @@
   "anyTopic": "Surprise me",
   "searchTopic": "Or search for a topic",
   "searchTopicHint": "e.g. space, coffee, Roman Empire",
-  "readingFrom": "From {source} · {language}",
-  "@readingFrom": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "language": {
-        "type": "String"
-      }
-    }
-  },
   "startReading": "Start reading",
   "topicExhausted": "You have read every article about \"{topic}\" on {source} ({language}).",
   "@topicExhausted": {
@@ -391,7 +366,6 @@
   "fromGallery": "Choose from gallery",
   "takePhoto": "Take a photo",
   "cameraHint": "Works on a real device (the Simulator has no camera)",
-  "removePhoto": "Remove my photo",
   "photoUpdated": "Profile picture updated ({size} KB)",
   "@photoUpdated": {
     "placeholders": {
@@ -400,7 +374,6 @@
       }
     }
   },
-  "photoRemoved": "Your photo was removed",
   "photoError": "Couldn't open photos. Please allow access in Settings.",
   "languageSection": "Language",
   "appLanguage": "App language",
@@ -435,8 +408,6 @@
   "navLibrary": "Library",
   "navReview": "Review",
   "navStats": "Stats",
-  "reviewComingSoonBody": "Spaced review will bring back the articles you are about to forget.",
-  "statsComingSoonBody": "Charts of your reading time and recall scores will live here.",
   "streakDays": "{count, plural, =1{1 day streak} other{{count} day streak}}",
   "@streakDays": {
     "placeholders": {
@@ -595,7 +566,6 @@
   "back": "Back",
   "setupStep1Title": "Who's reading?",
   "setupStep2Title": "How do you like to read?",
-  "selectedLabel": "Selected",
   "ttsSpeed": "Reading speed {rate}×, tap to change",
   "@ttsSpeed": {
     "placeholders": {
@@ -725,14 +695,6 @@
     }
   },
   "reviewDueSub": "Recall it first, then check the key points.",
-  "reviewNextOn": "Next review: {date}",
-  "@reviewNextOn": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "reviewBoxesTitle": "Memory boxes",
   "reviewBoxesHint": "Remember it and the article moves to a box with a longer gap. Forget it and it goes back to box 1.",
   "boxLabel": "Box {box}",
@@ -800,17 +762,6 @@
   "@reviewSaved": {
     "placeholders": {
       "count": {
-        "type": "int"
-      }
-    }
-  },
-  "reviewSuccessCaption": "{passed} of {total} reviews remembered",
-  "@reviewSuccessCaption": {
-    "placeholders": {
-      "passed": {
-        "type": "int"
-      },
-      "total": {
         "type": "int"
       }
     }

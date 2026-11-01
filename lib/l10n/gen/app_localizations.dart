@@ -136,12 +136,6 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @continueLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get continueLabel;
-
   /// No description provided for @minutesValue.
   ///
   /// In en, this message translates to:
@@ -508,12 +502,6 @@ abstract class AppLocalizations {
   /// **'Random article'**
   String get randomArticle;
 
-  /// No description provided for @finishCurrentFirst.
-  ///
-  /// In en, this message translates to:
-  /// **'Finish the current one'**
-  String get finishCurrentFirst;
-
   /// No description provided for @sessionLockedMessage.
   ///
   /// In en, this message translates to:
@@ -598,23 +586,11 @@ abstract class AppLocalizations {
   /// **'Total reading'**
   String get statTotalTime;
 
-  /// No description provided for @unitArticles.
-  ///
-  /// In en, this message translates to:
-  /// **'articles'**
-  String get unitArticles;
-
   /// No description provided for @unitMinutes.
   ///
   /// In en, this message translates to:
   /// **'min'**
   String get unitMinutes;
-
-  /// No description provided for @statAllTime.
-  ///
-  /// In en, this message translates to:
-  /// **'All time'**
-  String get statAllTime;
 
   /// No description provided for @emptyTitle.
   ///
@@ -663,12 +639,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reading'**
   String get readingTitle;
-
-  /// No description provided for @searchMore.
-  ///
-  /// In en, this message translates to:
-  /// **'Search for more'**
-  String get searchMore;
 
   /// No description provided for @pauseForLater.
   ///
@@ -802,12 +772,6 @@ abstract class AppLocalizations {
   /// **'Open the Wikipedia page'**
   String get openWikipedia;
 
-  /// No description provided for @openWikipediaSub.
-  ///
-  /// In en, this message translates to:
-  /// **'See images, tables and references'**
-  String get openWikipediaSub;
-
   /// No description provided for @writeSummaryTitle.
   ///
   /// In en, this message translates to:
@@ -909,12 +873,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not evaluated yet'**
   String get notEvaluatedYet;
-
-  /// No description provided for @scoreOutOf.
-  ///
-  /// In en, this message translates to:
-  /// **'{score} / 100'**
-  String scoreOutOf(int score);
 
   /// No description provided for @evaluatedBy.
   ///
@@ -1048,12 +1006,6 @@ abstract class AppLocalizations {
   /// **'e.g. space, coffee, Roman Empire'**
   String get searchTopicHint;
 
-  /// No description provided for @readingFrom.
-  ///
-  /// In en, this message translates to:
-  /// **'From {source} · {language}'**
-  String readingFrom(String source, String language);
-
   /// No description provided for @startReading.
   ///
   /// In en, this message translates to:
@@ -1126,23 +1078,11 @@ abstract class AppLocalizations {
   /// **'Works on a real device (the Simulator has no camera)'**
   String get cameraHint;
 
-  /// No description provided for @removePhoto.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove my photo'**
-  String get removePhoto;
-
   /// No description provided for @photoUpdated.
   ///
   /// In en, this message translates to:
   /// **'Profile picture updated ({size} KB)'**
   String photoUpdated(int size);
-
-  /// No description provided for @photoRemoved.
-  ///
-  /// In en, this message translates to:
-  /// **'Your photo was removed'**
-  String get photoRemoved;
 
   /// No description provided for @photoError.
   ///
@@ -1347,18 +1287,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stats'**
   String get navStats;
-
-  /// No description provided for @reviewComingSoonBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Spaced review will bring back the articles you are about to forget.'**
-  String get reviewComingSoonBody;
-
-  /// No description provided for @statsComingSoonBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Charts of your reading time and recall scores will live here.'**
-  String get statsComingSoonBody;
 
   /// No description provided for @streakDays.
   ///
@@ -1690,12 +1618,6 @@ abstract class AppLocalizations {
   /// **'How do you like to read?'**
   String get setupStep2Title;
 
-  /// No description provided for @selectedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Selected'**
-  String get selectedLabel;
-
   /// No description provided for @ttsSpeed.
   ///
   /// In en, this message translates to:
@@ -1882,12 +1804,6 @@ abstract class AppLocalizations {
   /// **'Recall it first, then check the key points.'**
   String get reviewDueSub;
 
-  /// No description provided for @reviewNextOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Next review: {date}'**
-  String reviewNextOn(String date);
-
   /// No description provided for @reviewBoxesTitle.
   ///
   /// In en, this message translates to:
@@ -2019,12 +1935,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Next review tomorrow} other{Next review in {count} days}}'**
   String reviewSaved(int count);
-
-  /// No description provided for @reviewSuccessCaption.
-  ///
-  /// In en, this message translates to:
-  /// **'{passed} of {total} reviews remembered'**
-  String reviewSuccessCaption(int passed, int total);
 
   /// No description provided for @deleteAccount.
   ///

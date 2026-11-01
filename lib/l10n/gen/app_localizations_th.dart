@@ -27,9 +27,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get delete => 'ลบ';
 
   @override
-  String get continueLabel => 'ต่อไป';
-
-  @override
   String minutesValue(int count) {
     return '$count นาที';
   }
@@ -243,9 +240,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get randomArticle => 'สุ่มบทความใหม่';
 
   @override
-  String get finishCurrentFirst => 'สรุปเรื่องเดิมก่อน';
-
-  @override
   String get sessionLockedMessage =>
       'มีบทความที่อ่านค้างอยู่ ต้องสรุปให้เสร็จก่อนจึงจะสุ่มเรื่องใหม่ได้';
 
@@ -295,13 +289,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get statTotalTime => 'เวลาอ่านรวม';
 
   @override
-  String get unitArticles => 'เรื่อง';
-
-  @override
   String get unitMinutes => 'นาที';
-
-  @override
-  String get statAllTime => 'ทั้งหมด';
 
   @override
   String get emptyTitle => 'ยังไม่มีประวัติการอ่าน';
@@ -333,9 +321,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get readingTitle => 'อ่านบทความ';
-
-  @override
-  String get searchMore => 'ค้นหาข้อมูลเพิ่ม';
 
   @override
   String get pauseForLater => 'พักไว้อ่านทีหลัง';
@@ -411,9 +396,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get openWikipedia => 'เปิดหน้า Wikipedia ต้นฉบับ';
 
   @override
-  String get openWikipediaSub => 'ดูรูปภาพ ตาราง และแหล่งอ้างอิง';
-
-  @override
   String get writeSummaryTitle => 'เขียนสรุป';
 
   @override
@@ -469,11 +451,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get notEvaluatedYet => 'ยังไม่ได้ประเมิน';
-
-  @override
-  String scoreOutOf(int score) {
-    return '$score / 100';
-  }
 
   @override
   String evaluatedBy(String model) {
@@ -545,11 +522,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get searchTopicHint => 'เช่น อวกาศ, กาแฟ, จักรวรรดิโรมัน';
 
   @override
-  String readingFrom(String source, String language) {
-    return 'จาก $source · $language';
-  }
-
-  @override
   String get startReading => 'เริ่มอ่าน';
 
   @override
@@ -588,15 +560,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cameraHint => 'ใช้ได้บนเครื่องจริง (Simulator ไม่มีกล้อง)';
 
   @override
-  String get removePhoto => 'ลบรูปของฉัน';
-
-  @override
   String photoUpdated(int size) {
     return 'อัปเดตรูปโปรไฟล์แล้ว ($size KB)';
   }
-
-  @override
-  String get photoRemoved => 'ลบรูปของคุณแล้ว';
 
   @override
   String get photoError => 'เปิดรูปไม่ได้ กรุณาอนุญาตการเข้าถึงใน Settings';
@@ -703,14 +669,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get navStats => 'สถิติ';
-
-  @override
-  String get reviewComingSoonBody =>
-      'ระบบทบทวนแบบเว้นระยะจะหยิบบทความที่คุณใกล้ลืมกลับมาให้อ่านอีกครั้ง';
-
-  @override
-  String get statsComingSoonBody =>
-      'กราฟเวลาอ่านและคะแนนการจำของคุณจะอยู่ที่นี่';
 
   @override
   String streakDays(int count) {
@@ -917,9 +875,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get setupStep2Title => 'อยากอ่านแบบไหน?';
 
   @override
-  String get selectedLabel => 'เลือกอยู่';
-
-  @override
   String ttsSpeed(String rate) {
     return 'ความเร็วเสียงอ่าน $rate× แตะเพื่อเปลี่ยน';
   }
@@ -1046,11 +1001,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get reviewDueSub => 'นึกให้ออกก่อน แล้วค่อยดูประเด็นสำคัญ';
 
   @override
-  String reviewNextOn(String date) {
-    return 'ทบทวนครั้งถัดไป: $date';
-  }
-
-  @override
   String get reviewBoxesTitle => 'กล่องความจำ';
 
   @override
@@ -1152,11 +1102,6 @@ class AppLocalizationsTh extends AppLocalizations {
       one: 'ทบทวนอีกครั้งพรุ่งนี้',
     );
     return '$_temp0';
-  }
-
-  @override
-  String reviewSuccessCaption(int passed, int total) {
-    return 'จำได้ $passed จาก $total ครั้ง';
   }
 
   @override

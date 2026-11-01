@@ -27,9 +27,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get delete => '删除';
 
   @override
-  String get continueLabel => '继续';
-
-  @override
   String minutesValue(int count) {
     return '$count 分钟';
   }
@@ -239,9 +236,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get randomArticle => '随机文章';
 
   @override
-  String get finishCurrentFirst => '先完成当前文章';
-
-  @override
   String get sessionLockedMessage => '还有未完成的文章，请先完成总结再开始新的文章';
 
   @override
@@ -290,13 +284,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get statTotalTime => '总阅读时间';
 
   @override
-  String get unitArticles => '篇';
-
-  @override
   String get unitMinutes => '分钟';
-
-  @override
-  String get statAllTime => '全部';
 
   @override
   String get emptyTitle => '还没有阅读记录';
@@ -327,9 +315,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get readingTitle => '阅读文章';
-
-  @override
-  String get searchMore => '搜索更多';
 
   @override
   String get pauseForLater => '暂停，稍后再读';
@@ -404,9 +389,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get openWikipedia => '打开 Wikipedia 原文';
 
   @override
-  String get openWikipediaSub => '查看图片、表格和参考资料';
-
-  @override
   String get writeSummaryTitle => '写总结';
 
   @override
@@ -460,11 +442,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notEvaluatedYet => '尚未评分';
-
-  @override
-  String scoreOutOf(int score) {
-    return '$score / 100';
-  }
 
   @override
   String evaluatedBy(String model) {
@@ -535,11 +512,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchTopicHint => '例如：太空、咖啡、罗马帝国';
 
   @override
-  String readingFrom(String source, String language) {
-    return '来自 $source · $language';
-  }
-
-  @override
   String get startReading => '开始阅读';
 
   @override
@@ -578,15 +550,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cameraHint => '需在真机上使用（Simulator 没有相机）';
 
   @override
-  String get removePhoto => '删除我的照片';
-
-  @override
   String photoUpdated(int size) {
     return '头像已更新（$size KB）';
   }
-
-  @override
-  String get photoRemoved => '已删除你的照片';
 
   @override
   String get photoError => '无法打开照片，请在设置中允许访问。';
@@ -689,12 +655,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get navStats => '统计';
-
-  @override
-  String get reviewComingSoonBody => '间隔复习会把你快要忘记的文章重新带回来。';
-
-  @override
-  String get statsComingSoonBody => '你的阅读时间和回忆得分图表将显示在这里。';
 
   @override
   String streakDays(int count) {
@@ -893,9 +853,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupStep2Title => '你喜欢怎样阅读？';
 
   @override
-  String get selectedLabel => '已选择';
-
-  @override
   String ttsSpeed(String rate) {
     return '朗读速度 $rate×，点按切换';
   }
@@ -1022,11 +979,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reviewDueSub => '先凭记忆回想，再看要点。';
 
   @override
-  String reviewNextOn(String date) {
-    return '下次复习：$date';
-  }
-
-  @override
   String get reviewBoxesTitle => '记忆盒';
 
   @override
@@ -1127,11 +1079,6 @@ class AppLocalizationsZh extends AppLocalizations {
       one: '明天再复习',
     );
     return '$_temp0';
-  }
-
-  @override
-  String reviewSuccessCaption(int passed, int total) {
-    return '$total 次中记得 $passed 次';
   }
 
   @override

@@ -139,15 +139,13 @@ lib/
 ├── widgets/                  keep_logo, capsule_nav_bar, charts, stat_tile, score_badge, reading_lamp, start_session_sheet
 └── l10n/arb/                 app_en.arb · app_th.arb · app_zh.arb
 test/                         core · models · services · widgets · screens (ออฟไลน์), live = เรียก API จริง
-docs/                         architecture.md · workflow.md · plan.md · images/
+docs/                         guide.md · images/
 firestore.rules               ผู้ใช้อ่าน/เขียนได้เฉพาะข้อมูลของตัวเอง
 .interface-design/system.md   ระบบดีไซน์: สี, ตัวอักษร, ระยะห่าง, component
 ```
 
 ## 📚 เอกสารเพิ่มเติม
-- [docs/architecture.md](docs/architecture.md) — สถาปัตยกรรม, Database, Async และคำถามที่อาจโดนถาม
-- [docs/workflow.md](docs/workflow.md) — สเปกการทำงานของแต่ละหน้า
-- [docs/plan.md](docs/plan.md) — ตารางงาน
+- [docs/guide.md](docs/guide.md) — คู่มือรวม: การทำงาน, โครงสร้างโค้ด, Database, สคริปต์นำเสนอ และคำถามที่อาจโดนถาม
 - [.interface-design/system.md](.interface-design/system.md) — ระบบดีไซน์
 
 ## 👤 ผู้พัฒนา
